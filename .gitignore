@@ -4,3 +4,6 @@ autocontract/output/*
 
 # Ignores INI files
 *.ini
+
+# Ignores app test files
+app_test.py

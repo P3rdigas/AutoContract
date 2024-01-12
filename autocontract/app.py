@@ -14,31 +14,20 @@ class AutoContract(customtkinter.CTk):
     TEMPLATE_FRAME_HEIGHT = 75
     DESTINATION_FRAME_HEIGHT = 75
 
-    MENUBAR_BACKGROUND_COLOR_LIGHT = "white"
-    MENUBAR_BACKGROUND_COLOR_DARK = "black"
+    # Colors first correspond to Light Mode and second to Dark Mode
+    MENUBAR_BACKGROUND_COLOR = "white", "black"
+    DROPDOWN_BACKGROUND_COLOR = "white", "grey20"
 
-    DROPDOWN_BACKGROUND_COLOR_LIGHT = "white"
-    DROPDOWN_BACKGROUND_COLOR_DARK = "grey20"
-
-    SEPARATOR_COLOR_LIGHT = "grey90"
-    SEPARATOR_COLOR_DARK = "black"
+    SEPARATOR_COLOR = "grey90", "black"
 
     # DRAG_AND_DROP_BG_COLOR_LIGHT = "grey95"
     # DRAG_AND_DROP_BG_COLOR_DARK = "grey15"
     # DRAG_AND_DROP_SEPARATOR_COLOR_LIGHT = "grey90"
     # DRAG_AND_DROP_SEPARATOR_COLOR_DARK = "black"
 
-    TEXT_COLOR_LIGHT = "black"
-    TEXT_COLOR_DARK = "white"
-    HOVER_COLOR_LIGHT = "grey85"
-    HOVER_COLOR_DARK = "grey25"
+    FRAMES_BACKGROUND_COLOR = "transparent"
 
-    GITHUB_LOGO_LIGHT_PATH = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "assets/icons/github-mark.png"
-    )
-    GITHUB_LOGO_DARK_PATH = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "assets/icons/github-mark-white.png"
-    )
+    HOVER_COLOR = "grey85", "grey25"
 
     SOURCE_CODE_URL = "https://github.com/P3rdigas/AutoContract"
 
@@ -64,38 +53,25 @@ class AutoContract(customtkinter.CTk):
         self.load_configuration()
 
         # Set Menubar
-        self.toolbar = CTkMenuBar(
-            master=self,
-            bg_color=(
-                self.MENUBAR_BACKGROUND_COLOR_LIGHT,
-                self.MENUBAR_BACKGROUND_COLOR_DARK,
-            ),
-        )
+        self.toolbar = CTkMenuBar(master=self, bg_color=self.MENUBAR_BACKGROUND_COLOR)
         self.file_button = self.toolbar.add_cascade(
             "File",
-            text_color=(self.TEXT_COLOR_LIGHT, self.TEXT_COLOR_DARK),
-            hover_color=(self.HOVER_COLOR_LIGHT, self.HOVER_COLOR_DARK),
+            hover_color=self.HOVER_COLOR,
         )
         self.settings_button = self.toolbar.add_cascade(
             "Settings",
-            text_color=(self.TEXT_COLOR_LIGHT, self.TEXT_COLOR_DARK),
-            hover_color=(self.HOVER_COLOR_LIGHT, self.HOVER_COLOR_DARK),
+            hover_color=self.HOVER_COLOR,
         )
         self.about_button = self.toolbar.add_cascade(
             "About",
-            text_color=(self.TEXT_COLOR_LIGHT, self.TEXT_COLOR_DARK),
-            hover_color=(self.HOVER_COLOR_LIGHT, self.HOVER_COLOR_DARK),
+            hover_color=self.HOVER_COLOR,
         )
 
         self.file_button_dropdown = CustomDropdownMenu(
             widget=self.file_button,
             corner_radius=0,
-            bg_color=(
-                self.DROPDOWN_BACKGROUND_COLOR_LIGHT,
-                self.DROPDOWN_BACKGROUND_COLOR_DARK,
-            ),
-            text_color=(self.TEXT_COLOR_LIGHT, self.TEXT_COLOR_DARK),
-            hover_color=(self.HOVER_COLOR_LIGHT, self.HOVER_COLOR_DARK),
+            bg_color=self.DROPDOWN_BACKGROUND_COLOR,
+            hover_color=self.HOVER_COLOR,
         )
         self.file_button_dropdown.add_option(option="Import")
         self.file_button_dropdown.add_option(option="Export")
@@ -104,12 +80,8 @@ class AutoContract(customtkinter.CTk):
         self.settings_button_dropdown = CustomDropdownMenu(
             widget=self.settings_button,
             corner_radius=0,
-            bg_color=(
-                self.DROPDOWN_BACKGROUND_COLOR_LIGHT,
-                self.DROPDOWN_BACKGROUND_COLOR_DARK,
-            ),
-            text_color=(self.TEXT_COLOR_LIGHT, self.TEXT_COLOR_DARK),
-            hover_color=(self.HOVER_COLOR_LIGHT, self.HOVER_COLOR_DARK),
+            bg_color=self.DROPDOWN_BACKGROUND_COLOR,
+            hover_color=self.HOVER_COLOR,
         )
         appearance_sub_menu = self.settings_button_dropdown.add_submenu("Appearance")
         appearance_sub_menu.add_option(
@@ -122,20 +94,25 @@ class AutoContract(customtkinter.CTk):
             option="System", command=lambda: self.change_appearance_mode_event("system")
         )
 
+        github_icon_light_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "assets/icons/github-mark.png"
+        )
+
+        github_icon_dark_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "assets/icons/github-mark-white.png",
+        )
+
         github_image = customtkinter.CTkImage(
-            light_image=Image.open(self.GITHUB_LOGO_LIGHT_PATH),
-            dark_image=Image.open(self.GITHUB_LOGO_DARK_PATH),
+            light_image=Image.open(github_icon_light_path),
+            dark_image=Image.open(github_icon_dark_path),
         )
 
         self.about_button_dropdown = CustomDropdownMenu(
             widget=self.about_button,
             corner_radius=0,
-            bg_color=(
-                self.DROPDOWN_BACKGROUND_COLOR_LIGHT,
-                self.DROPDOWN_BACKGROUND_COLOR_DARK,
-            ),
-            text_color=(self.TEXT_COLOR_LIGHT, self.TEXT_COLOR_DARK),
-            hover_color=(self.HOVER_COLOR_LIGHT, self.HOVER_COLOR_DARK),
+            bg_color=self.DROPDOWN_BACKGROUND_COLOR,
+            hover_color=self.HOVER_COLOR,
         )
         self.about_button_dropdown.add_option(
             option="Source Code", image=github_image, command=self.open_browser
@@ -147,6 +124,7 @@ class AutoContract(customtkinter.CTk):
             self,
             height=self.TEMPLATE_FRAME_HEIGHT,
             corner_radius=0,
+            fg_color=self.FRAMES_BACKGROUND_COLOR,
         )
 
         # Create Separator for Template and Data Frames
@@ -154,26 +132,22 @@ class AutoContract(customtkinter.CTk):
             self,
             corner_radius=0,
             height=1,
-            fg_color=(
-                self.SEPARATOR_COLOR_LIGHT,
-                self.SEPARATOR_COLOR_DARK,
-            ),
+            fg_color=self.SEPARATOR_COLOR,
             border_width=1,
         )
 
         # Data Frame
         # TODO: Change to scrollable X & Y
-        data_frame = customtkinter.CTkFrame(self, corner_radius=0)
+        data_frame = customtkinter.CTkFrame(
+            self, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
+        )
 
         # Create Separator for Data and Destination Frames
         separator_d_d = customtkinter.CTkFrame(
             self,
             corner_radius=0,
             height=1,
-            fg_color=(
-                self.SEPARATOR_COLOR_LIGHT,
-                self.SEPARATOR_COLOR_DARK,
-            ),
+            fg_color=self.SEPARATOR_COLOR,
             border_width=1,
         )
 
@@ -182,6 +156,19 @@ class AutoContract(customtkinter.CTk):
             self,
             height=self.DESTINATION_FRAME_HEIGHT,
             corner_radius=0,
+            fg_color=self.FRAMES_BACKGROUND_COLOR,
+        )
+
+        destination_label_frame = customtkinter.CTkFrame(
+            destination_frame, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
+        )
+
+        destination_label = customtkinter.CTkLabel(
+            destination_label_frame, text="Destination Folder"
+        )
+
+        destination_controls_frame = customtkinter.CTkFrame(
+            destination_frame, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
         )
 
         # Template Layout
@@ -197,6 +184,9 @@ class AutoContract(customtkinter.CTk):
         separator_d_d.pack(fill="x")
 
         # Destination Layout
+        destination_label.pack(side="left", padx=10)
+        destination_label_frame.place(x=0, y=0, relheight=0.5, relwidth=1)
+        destination_controls_frame.place(x=0, rely=0.5, relheight=0.5, relwidth=1)
         destination_frame.pack(fill="x")
 
     def load_configuration(self):
