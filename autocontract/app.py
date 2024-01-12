@@ -11,16 +11,22 @@ class AutoContract(customtkinter.CTk):
     APP_WIDTH = 800
     APP_HEIGHT = 600
 
+    TEMPLATE_FRAME_HEIGHT = 75
+    DESTINATION_FRAME_HEIGHT = 75
+
     MENUBAR_BACKGROUND_COLOR_LIGHT = "white"
     MENUBAR_BACKGROUND_COLOR_DARK = "black"
 
     DROPDOWN_BACKGROUND_COLOR_LIGHT = "white"
     DROPDOWN_BACKGROUND_COLOR_DARK = "grey20"
 
-    DRAG_AND_DROP_BG_COLOR_LIGHT = "grey95"
-    DRAG_AND_DROP_BG_COLOR_DARK = "grey15"
-    DRAG_AND_DROP_SEPARATOR_COLOR_LIGHT = "grey90"
-    DRAG_AND_DROP_SEPARATOR_COLOR_DARK = "black"
+    SEPARATOR_COLOR_LIGHT = "grey90"
+    SEPARATOR_COLOR_DARK = "black"
+
+    # DRAG_AND_DROP_BG_COLOR_LIGHT = "grey95"
+    # DRAG_AND_DROP_BG_COLOR_DARK = "grey15"
+    # DRAG_AND_DROP_SEPARATOR_COLOR_LIGHT = "grey90"
+    # DRAG_AND_DROP_SEPARATOR_COLOR_DARK = "black"
 
     TEXT_COLOR_LIGHT = "black"
     TEXT_COLOR_DARK = "white"
@@ -134,6 +140,64 @@ class AutoContract(customtkinter.CTk):
         self.about_button_dropdown.add_option(
             option="Source Code", image=github_image, command=self.open_browser
         )
+
+        # Layout (Template Frame(100px), Data Frame(what's left), Destination Frame(100px with generate button))
+        # Template Frame
+        template_frame = customtkinter.CTkFrame(
+            self,
+            height=self.TEMPLATE_FRAME_HEIGHT,
+            corner_radius=0,
+        )
+
+        # Create Separator for Template and Data Frames
+        separator_t_d = customtkinter.CTkFrame(
+            self,
+            corner_radius=0,
+            height=1,
+            fg_color=(
+                self.SEPARATOR_COLOR_LIGHT,
+                self.SEPARATOR_COLOR_DARK,
+            ),
+            border_width=1,
+        )
+
+        # Data Frame
+        # TODO: Change to scrollable X & Y
+        data_frame = customtkinter.CTkFrame(self, corner_radius=0)
+
+        # Create Separator for Data and Destination Frames
+        separator_d_d = customtkinter.CTkFrame(
+            self,
+            corner_radius=0,
+            height=1,
+            fg_color=(
+                self.SEPARATOR_COLOR_LIGHT,
+                self.SEPARATOR_COLOR_DARK,
+            ),
+            border_width=1,
+        )
+
+        # Destination Frame
+        destination_frame = customtkinter.CTkFrame(
+            self,
+            height=self.DESTINATION_FRAME_HEIGHT,
+            corner_radius=0,
+        )
+
+        # Template Layout
+        template_frame.pack(fill="x")
+
+        # Separator Layout for Template Frame and Data Frame
+        separator_t_d.pack(fill="x")
+
+        # Data Layout
+        data_frame.pack(expand=True, fill="both")
+
+        # Separator Layout for Data Frame and Destination Frame
+        separator_d_d.pack(fill="x")
+
+        # Destination Layout
+        destination_frame.pack(fill="x")
 
     def load_configuration(self):
         if os.path.isfile(self.config_file):
