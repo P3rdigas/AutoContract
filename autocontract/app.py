@@ -16,8 +16,6 @@ class AutoContract(customtkinter.CTk):
     TEMPLATE_FRAME_HEIGHT = 75
     DESTINATION_FRAME_HEIGHT = 75
 
-    DESTINATION_FOLDER_NAME_WIDTH = 100
-
     # Colors first correspond to Light Mode and second to Dark Mode
     MENUBAR_BACKGROUND_COLOR = "white", "black"
     DROPDOWN_BACKGROUND_COLOR = "white", "grey20"
