@@ -21,12 +21,10 @@ class AutoContract(customtkinter.CTk):
     # Colors first correspond to Light Mode and second to Dark Mode
     MENUBAR_BACKGROUND_COLOR = "white", "black"
     DROPDOWN_BACKGROUND_COLOR = "white", "grey20"
-
-    SEPARATOR_COLOR = "grey90", "black"
+    FRAMES_BACKGROUND_COLOR = "transparent"
+    SEPARATOR_BACKGROUND_COLOR = "grey90", "black"
 
     TOOLTIP_BORDER_COLOR = "black", "white"
-
-    FRAMES_BACKGROUND_COLOR = "transparent"
 
     HOVER_COLOR = "grey85", "grey25"
 
@@ -135,7 +133,7 @@ class AutoContract(customtkinter.CTk):
             self,
             corner_radius=0,
             height=1,
-            fg_color=self.SEPARATOR_COLOR,
+            fg_color=self.SEPARATOR_BACKGROUND_COLOR,
             border_width=1,
         )
 
@@ -150,7 +148,7 @@ class AutoContract(customtkinter.CTk):
             self,
             corner_radius=0,
             height=1,
-            fg_color=self.SEPARATOR_COLOR,
+            fg_color=self.SEPARATOR_BACKGROUND_COLOR,
             border_width=1,
         )
 
@@ -317,7 +315,6 @@ class AutoContract(customtkinter.CTk):
             text_width = self.get_width_text(folder)
 
             label_width = self.DESTINATION_FOLDER_NAME_WIDTH
-            print(label_width)
             if text_width > self.DESTINATION_FOLDER_NAME_WIDTH:
                 # Less one (approximately three dots size in pixels)
                 text = (
