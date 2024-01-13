@@ -13,6 +13,7 @@ openpyxl = "^3.1.2"
 customtkinter = "^5.2.2"
 pillow = "^10.2.0"
 ctkmenubar = {git = "https://github.com/P3rdigas/CTkMenuBar.git", rev = "poetry"}
+ctktooltip = {git = "https://github.com/P3rdigas/CTkToolTip-Poetry.git", rev = "poetry"}
 
 
 [build-system]
