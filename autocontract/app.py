@@ -27,6 +27,7 @@ class AutoContract(customtkinter.CTk):
     HOVER_COLOR = "grey85", "grey25"
 
     NO_FOLDER_SELECTED = "No folder selected"
+    NO_FILE_SELECTED = "No file selected"
 
     SOURCE_CODE_URL = "https://github.com/P3rdigas/AutoContract"
 
@@ -126,6 +127,73 @@ class AutoContract(customtkinter.CTk):
             fg_color=self.FRAMES_BACKGROUND_COLOR,
         )
 
+        template_label_frame = customtkinter.CTkFrame(
+            template_frame, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
+        )
+
+        # TODO: put image (number 1???)
+        template_label = customtkinter.CTkLabel(template_label_frame, text="Template")
+
+        template_controls_frame = customtkinter.CTkFrame(
+            template_frame, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
+        )
+
+        template_file_label = customtkinter.CTkLabel(
+            template_controls_frame, text="Template file:"
+        )
+
+        self.template_file = None
+
+        # Default width of the label (can provide font),
+        self.TEMPLATE_FILE_NAME_WIDTH = self.get_width_text(self.NO_FILE_SELECTED)
+
+        # Width: plus 1 (if width of label equals the width of the text the text you jump out by 1 px) and plus 10 (margin, 5 to the left, 5 to the right)
+        self.template_file_name_label = customtkinter.CTkLabel(
+            template_controls_frame,
+            width=self.TEMPLATE_FILE_NAME_WIDTH + 1 + 10,
+            text=self.NO_FILE_SELECTED,
+        )
+
+        self.template_file_name_label_tooltip = CTkToolTip(
+            self.template_file_name_label,
+            message=None,
+            corner_radius=5,
+            border_width=1,
+            border_color=self.TOOLTIP_BORDER_COLOR,
+        )
+
+        # If the text is smaller than the label width no need to show a tooltip
+        self.template_file_name_label_tooltip.hide()
+
+        self.template_file_name_label.bind(
+            "<Enter>",
+            lambda event: self.on_enter(event, self.template_file_name_label_tooltip),
+        )
+
+        # TODO: Set a better color
+        # Width to 1 so the button takes the width of the text
+        template_file_button = customtkinter.CTkButton(
+            template_controls_frame,
+            width=1,
+            text="Choose file",
+            # fg_color="transparent",
+            hover_color=self.HOVER_COLOR,
+            command=self.choose_template_file,
+        )
+
+        # TODO: Set a better color
+        # Width to 1 so the button takes the width of the text
+        template_file_clear_button = customtkinter.CTkButton(
+            template_controls_frame,
+            width=1,
+            text="Reset",
+            # fg_color="transparent",
+            hover_color=self.HOVER_COLOR,
+            command=self.reset_template_file,
+        )
+
+        # TODO: Add button for a tooltip to explain what a template should have
+
         # Create Separator for Template and Data Frames
         separator_t_d = customtkinter.CTkFrame(
             self,
@@ -175,7 +243,7 @@ class AutoContract(customtkinter.CTk):
             destination_controls_frame, text="Destination folder:"
         )
 
-        self.destination_folder_name = None
+        self.destination_folder = None
 
         # Default width of the label (can provide font),
         self.DESTINATION_FOLDER_NAME_WIDTH = self.get_width_text(
@@ -241,6 +309,14 @@ class AutoContract(customtkinter.CTk):
         )
 
         # Template Layout
+        template_file_label.pack(side="left", padx=10)
+        # Left padding 0px and right padding 10px
+        self.template_file_name_label.pack(side="left", padx=(0, 10))
+        template_file_button.pack(side="left", padx=(0, 5))
+        template_file_clear_button.pack(side="left")
+        template_label.pack(side="left", padx=10)
+        template_label_frame.place(x=0, y=0, relheight=0.5, relwidth=1)
+        template_controls_frame.place(x=0, rely=0.5, relheight=0.5, relwidth=1)
         template_frame.pack(fill="x")
 
         # Separator Layout for Template Frame and Data Frame
@@ -254,7 +330,6 @@ class AutoContract(customtkinter.CTk):
 
         # Destination Layout
         destination_folder_label.pack(side="left", padx=10)
-        # Left padding 0px and right padding 10px
         self.destination_folder_name_label.pack(side="left", padx=(0, 10))
         destination_folder_button.pack(side="left", padx=(0, 5))
         destination_folder_clear_button.pack(side="left")
@@ -302,13 +377,53 @@ class AutoContract(customtkinter.CTk):
     def on_enter(self, event, tooltip):
         tooltip.get()
 
+    # TODO: Refactor this function with choose_destination_folder()
+    def choose_template_file(self):
+        app_path = os.path.dirname(os.path.abspath(__file__))
+
+        file = filedialog.askopenfile(
+            initialdir=app_path, filetypes=[("Word files", ".docx")]
+        )
+
+        if file:
+            self.template_file = file
+
+            filename = os.path.basename(file.name)
+
+            text_width = self.get_width_text(filename)
+
+            label_width = self.TEMPLATE_FILE_NAME_WIDTH
+            if text_width > self.TEMPLATE_FILE_NAME_WIDTH:
+                # Less one (approximately three dots size in pixels)
+                text = (
+                    filename[: int(label_width / (text_width / len(filename))) - 1]
+                    + "..."
+                )
+
+                self.template_file_name_label.configure(text=text)
+                self.template_file_name_label_tooltip.configure(message=filename)
+
+                if self.template_file_name_label_tooltip.is_disabled():
+                    self.template_file_name_label_tooltip.show()
+            else:
+                self.template_file_name_label.configure(text=filename)
+                self.template_file_name_label_tooltip.hide()
+
+    # TODO: Refactor this function with reset_destination_folder()
+    def reset_template_file(self):
+        if self.template_file is not None:
+            self.template_file = None
+            self.template_file_name_label.configure(text=self.NO_FILE_SELECTED)
+            self.template_file_name_label_tooltip.configure(message=None)
+            self.template_file_name_label_tooltip.hide()
+
     def choose_destination_folder(self):
         app_path = os.path.dirname(os.path.abspath(__file__))
 
         folder = filedialog.askdirectory(initialdir=app_path)
 
         if folder:
-            self.destination_folder_name = folder
+            self.destination_folder = folder
 
             text_width = self.get_width_text(folder)
 
@@ -328,8 +443,8 @@ class AutoContract(customtkinter.CTk):
                 self.destination_folder_name_label_tooltip.hide()
 
     def reset_destination_folder(self):
-        if self.destination_folder_name is not None:
-            self.destination_folder_name = None
+        if self.destination_folder is not None:
+            self.destination_folder = None
             self.destination_folder_name_label.configure(text=self.NO_FOLDER_SELECTED)
             self.destination_folder_name_label_tooltip.configure(message=None)
             self.destination_folder_name_label_tooltip.hide()
