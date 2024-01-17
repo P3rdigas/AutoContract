@@ -14,6 +14,7 @@ class AutoContract(customtkinter.CTk):
     APP_HEIGHT = 600
 
     TEMPLATE_FRAME_HEIGHT = 75
+    DATA_CONTROLS_FRAME_HEIGHT = 75
     DESTINATION_FRAME_HEIGHT = 75
 
     # Colors first correspond to Light Mode and second to Dark Mode
@@ -131,8 +132,7 @@ class AutoContract(customtkinter.CTk):
             template_frame, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
         )
 
-        # TODO: put image (number 1???)
-        template_label = customtkinter.CTkLabel(template_label_frame, text="Template")
+        template_label = customtkinter.CTkLabel(template_label_frame, text="① Template")
 
         template_controls_frame = customtkinter.CTkFrame(
             template_frame, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
@@ -204,9 +204,43 @@ class AutoContract(customtkinter.CTk):
         )
 
         # Data Frame
-        # TODO: Change to scrollable X & Y
         data_frame = customtkinter.CTkFrame(
             self, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
+        )
+
+        data_header_frame = customtkinter.CTkFrame(
+            data_frame,
+            height=self.DATA_CONTROLS_FRAME_HEIGHT,
+            corner_radius=0,
+            fg_color=self.FRAMES_BACKGROUND_COLOR,
+        )
+
+        data_header_label_frame = customtkinter.CTkFrame(
+            data_header_frame,
+            height=self.DATA_CONTROLS_FRAME_HEIGHT,
+            corner_radius=0,
+            fg_color=self.FRAMES_BACKGROUND_COLOR,
+        )
+
+        # TODO: Add button for a tooltip to explain how to add data
+
+        data_header_label = customtkinter.CTkLabel(
+            data_header_label_frame, text="② Data"
+        )
+
+        data_header_controls_frame = customtkinter.CTkFrame(
+            data_header_frame,
+            corner_radius=0,
+            fg_color=self.FRAMES_BACKGROUND_COLOR,
+        )
+
+        # TODO: Add import csv files as data
+
+        # TODO: Change to scrollable X & Y
+        data_entry_frame = customtkinter.CTkFrame(
+            data_frame,
+            corner_radius=0,
+            fg_color=self.FRAMES_BACKGROUND_COLOR,
         )
 
         # Create Separator for Data and Destination Frames
@@ -230,9 +264,8 @@ class AutoContract(customtkinter.CTk):
             destination_frame, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
         )
 
-        # TODO: put image (number 3???)
         destination_label = customtkinter.CTkLabel(
-            destination_label_frame, text="Destination"
+            destination_label_frame, text="③ Destination"
         )
 
         destination_controls_frame = customtkinter.CTkFrame(
@@ -309,13 +342,13 @@ class AutoContract(customtkinter.CTk):
         )
 
         # Template Layout
+        template_label.pack(side="left", padx=10)
+        template_label_frame.place(x=0, y=0, relheight=0.5, relwidth=1)
         template_file_label.pack(side="left", padx=10)
         # Left padding 0px and right padding 10px
         self.template_file_name_label.pack(side="left", padx=(0, 10))
         template_file_button.pack(side="left", padx=(0, 5))
         template_file_clear_button.pack(side="left")
-        template_label.pack(side="left", padx=10)
-        template_label_frame.place(x=0, y=0, relheight=0.5, relwidth=1)
         template_controls_frame.place(x=0, rely=0.5, relheight=0.5, relwidth=1)
         template_frame.pack(fill="x")
 
@@ -323,19 +356,24 @@ class AutoContract(customtkinter.CTk):
         separator_t_d.pack(fill="x")
 
         # Data Layout
+        data_header_label.pack(side="left", padx=10)
+        data_header_label_frame.place(x=0, y=0, relheight=0.5, relwidth=1)
+        data_header_controls_frame.place(x=0, rely=0.5, relheight=0.5, relwidth=1)
+        data_header_frame.pack(fill="x")
+        data_entry_frame.pack(expand=True, fill="both")
         data_frame.pack(expand=True, fill="both")
 
         # Separator Layout for Data Frame and Destination Frame
         separator_d_d.pack(fill="x")
 
         # Destination Layout
+        destination_label.pack(side="left", padx=10)
+        destination_label_frame.place(x=0, y=0, relheight=0.5, relwidth=1)
         destination_folder_label.pack(side="left", padx=10)
         self.destination_folder_name_label.pack(side="left", padx=(0, 10))
         destination_folder_button.pack(side="left", padx=(0, 5))
         destination_folder_clear_button.pack(side="left")
         destination_generate_button.pack(side="right", padx=(0, 10))
-        destination_label.pack(side="left", padx=10)
-        destination_label_frame.place(x=0, y=0, relheight=0.5, relwidth=1)
         destination_controls_frame.place(x=0, rely=0.5, relheight=0.5, relwidth=1)
         destination_frame.pack(fill="x")
 
