@@ -132,6 +132,7 @@ class AutoContract(customtkinter.CTk):
             template_frame, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
         )
 
+        # Unicode symbols: http://xahlee.info/comp/unicode_circled_numbers.html
         template_label = customtkinter.CTkLabel(template_label_frame, text="① Template")
 
         template_controls_frame = customtkinter.CTkFrame(
@@ -222,8 +223,8 @@ class AutoContract(customtkinter.CTk):
             fg_color=self.FRAMES_BACKGROUND_COLOR,
         )
 
+        # Unicode symbols: http://xahlee.info/comp/unicode_circled_numbers.html
         # TODO: Add button for a tooltip to explain how to add data
-
         data_header_label = customtkinter.CTkLabel(
             data_header_label_frame, text="② Data"
         )
@@ -264,6 +265,7 @@ class AutoContract(customtkinter.CTk):
             destination_frame, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
         )
 
+        # Unicode symbols: http://xahlee.info/comp/unicode_circled_numbers.html
         destination_label = customtkinter.CTkLabel(
             destination_label_frame, text="③ Destination"
         )
