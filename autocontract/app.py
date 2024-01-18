@@ -6,6 +6,7 @@ from tkinter import filedialog
 import customtkinter
 from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
 from CTkToolTip import CTkToolTip
+from CTkXYFrame import CTkXYFrame
 from PIL import Image
 
 
@@ -238,10 +239,11 @@ class AutoContract(customtkinter.CTk):
         # TODO: Add import csv files as data
 
         # TODO: Change to scrollable X & Y
-        data_entry_frame = customtkinter.CTkFrame(
+        # TODO: Scrollable X & Y background color transparent
+        data_entry_frame = CTkXYFrame(
             data_frame,
             corner_radius=0,
-            fg_color=self.FRAMES_BACKGROUND_COLOR,
+            # fg_color=self.FRAMES_BACKGROUND_COLOR,
         )
 
         # Create Separator for Data and Destination Frames

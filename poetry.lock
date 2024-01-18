@@ -39,6 +39,24 @@ reference = "poetry"
 resolved_reference = "71c962d376984b09307ba5807428251e8d381cc0"
 
 [[package]]
+name = "ctkxyframe"
+version = "0.1.0"
+description = ""
+optional = false
+python-versions = "^3.12"
+files = []
+develop = false
+
+[package.dependencies]
+customtkinter = "^5.2.2"
+
+[package.source]
+type = "git"
+url = "https://github.com/P3rdigas/CTkXYFrame.git"
+reference = "poetry"
+resolved_reference = "e65fac99215c4cc9cd269239da5f2d8e92e33065"
+
+[[package]]
 name = "customtkinter"
 version = "5.2.2"
 description = "Create modern looking GUIs with Python"
@@ -466,4 +484,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "f86c104d4d9bdb4b4c5bd5cf173fa583648545341bcc01f8dade25c52a3c07a2"
+content-hash = "5ec753e5c4b621904e36d71fbfc9701eac8066aa45e34cfa6cf74c2e52a23a58"
