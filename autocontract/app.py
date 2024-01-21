@@ -21,6 +21,8 @@ class AutoContract(customtkinter.CTk):
 
     START_ENTRY_NUM = 3
 
+    ADD_ENTRY_ICON_SIZE = (16, 16)
+
     # Colors first correspond to Light Mode and second to Dark Mode
     MENUBAR_BACKGROUND_COLOR = "white", "black"
     DROPDOWN_BACKGROUND_COLOR = "white", "grey20"
@@ -33,6 +35,15 @@ class AutoContract(customtkinter.CTk):
 
     NO_FOLDER_SELECTED = "No folder selected"
     NO_FILE_SELECTED = "No file selected"
+
+    ADD_ENTRY_LIGHT_PATH = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "assets/icons/add-black.png",
+    )
+    ADD_ENTRY_DARK_PATH = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "assets/icons/add-white.png",
+    )
 
     SOURCE_CODE_URL = "https://github.com/P3rdigas/AutoContract"
 
@@ -262,31 +273,26 @@ class AutoContract(customtkinter.CTk):
                 entry = customtkinter.CTkEntry(self.data_entry_scroll_frame)
                 entry.grid(row=i, column=j, padx=10, pady=5)
 
-        num_cols = self.data_entry_scroll_frame.grid_size()[0]
-        num_rows = self.data_entry_scroll_frame.grid_size()[1]
+        add_entry_image = customtkinter.CTkImage(
+            light_image=Image.open(self.ADD_ENTRY_LIGHT_PATH),
+            dark_image=Image.open(self.ADD_ENTRY_DARK_PATH),
+            size=self.ADD_ENTRY_ICON_SIZE,
+        )
 
-        # TODO: Change "+" to image/icon
         self.add_row_button = customtkinter.CTkButton(
             self.data_entry_scroll_frame,
             height=self.DATA_ADD_BUTTON_SIZE,
-            text="+",
+            text="",
+            image=add_entry_image,
             command=self.add_row,
         )
 
-        self.add_row_button.grid(
-            row=num_rows, column=0, columnspan=num_cols, pady=10, sticky="we"
-        )
-
-        # TODO: Change "+" to image/icon
         self.add_column_button = customtkinter.CTkButton(
             self.data_entry_scroll_frame,
             width=self.DATA_ADD_BUTTON_SIZE,
-            text="+",
+            text="",
+            image=add_entry_image,
             command=self.add_column,
-        )
-
-        self.add_column_button.grid(
-            row=0, column=num_cols, rowspan=num_rows, padx=10, sticky="ns"
         )
 
         # Create Separator for Data and Destination Frames
@@ -403,6 +409,17 @@ class AutoContract(customtkinter.CTk):
         separator_t_d.pack(fill="x")
 
         # Data Layout
+        num_cols = self.data_entry_scroll_frame.grid_size()[0]
+        num_rows = self.data_entry_scroll_frame.grid_size()[1]
+
+        self.add_row_button.grid(
+            row=num_rows, column=0, columnspan=num_cols, pady=10, sticky="we"
+        )
+
+        self.add_column_button.grid(
+            row=0, column=num_cols, rowspan=num_rows, padx=10, sticky="ns"
+        )
+
         data_header_label.pack(side="left", padx=10)
         data_header_label_frame.place(x=0, y=0, relheight=0.5, relwidth=1)
         data_header_controls_frame.place(x=0, rely=0.5, relheight=0.5, relwidth=1)
@@ -573,6 +590,7 @@ class AutoContract(customtkinter.CTk):
 
 
 def main():
+    # TODO: Credits for <a href="https://www.flaticon.com/free-icons/plus" title="plus icons">Plus icons created by Fuzzee - Flaticon</a>
     app = AutoContract()
     app.mainloop()
 
