@@ -16,7 +16,10 @@ class AutoContract(customtkinter.CTk):
 
     TEMPLATE_FRAME_HEIGHT = 75
     DATA_CONTROLS_FRAME_HEIGHT = 75
+    DATA_ADD_BUTTON_SIZE = 30
     DESTINATION_FRAME_HEIGHT = 75
+
+    START_ENTRY_NUM = 3
 
     # Colors first correspond to Light Mode and second to Dark Mode
     MENUBAR_BACKGROUND_COLOR = "white", "black"
@@ -240,10 +243,50 @@ class AutoContract(customtkinter.CTk):
 
         # TODO: Change to scrollable X & Y
         # TODO: Scrollable X & Y background color transparent
-        data_entry_frame = CTkXYFrame(
+        self.data_entry_scroll_frame = CTkXYFrame(
             data_frame,
             corner_radius=0,
             # fg_color=self.FRAMES_BACKGROUND_COLOR,
+        )
+
+        labels = ["Variables"] + [
+            f"Row {i}" for i in range(1, self.START_ENTRY_NUM + 1)
+        ]
+        for i, label_text in enumerate(labels):
+            label = customtkinter.CTkLabel(
+                self.data_entry_scroll_frame, text=label_text, padx=10, pady=5
+            )
+            label.grid(row=i, column=0, sticky="w")
+
+            for j in range(1, self.START_ENTRY_NUM):
+                entry = customtkinter.CTkEntry(self.data_entry_scroll_frame)
+                entry.grid(row=i, column=j, padx=10, pady=5)
+
+        num_cols = self.data_entry_scroll_frame.grid_size()[0]
+        num_rows = self.data_entry_scroll_frame.grid_size()[1]
+
+        # TODO: Change "+" to image/icon
+        self.add_row_button = customtkinter.CTkButton(
+            self.data_entry_scroll_frame,
+            height=self.DATA_ADD_BUTTON_SIZE,
+            text="+",
+            command=self.add_row,
+        )
+
+        self.add_row_button.grid(
+            row=num_rows, column=0, columnspan=num_cols, pady=10, sticky="we"
+        )
+
+        # TODO: Change "+" to image/icon
+        self.add_column_button = customtkinter.CTkButton(
+            self.data_entry_scroll_frame,
+            width=self.DATA_ADD_BUTTON_SIZE,
+            text="+",
+            command=self.add_column,
+        )
+
+        self.add_column_button.grid(
+            row=0, column=num_cols, rowspan=num_rows, padx=10, sticky="ns"
         )
 
         # Create Separator for Data and Destination Frames
@@ -364,7 +407,7 @@ class AutoContract(customtkinter.CTk):
         data_header_label_frame.place(x=0, y=0, relheight=0.5, relwidth=1)
         data_header_controls_frame.place(x=0, rely=0.5, relheight=0.5, relwidth=1)
         data_header_frame.pack(fill="x")
-        data_entry_frame.pack(expand=True, fill="both")
+        self.data_entry_scroll_frame.pack(expand=True, fill="both")
         data_frame.pack(expand=True, fill="both")
 
         # Separator Layout for Data Frame and Destination Frame
@@ -418,6 +461,40 @@ class AutoContract(customtkinter.CTk):
 
     def on_enter(self, event, tooltip):
         tooltip.get()
+
+    def add_row(self):
+        entry_cols = self.data_entry_scroll_frame.grid_size()[0] - 2
+        num_rows = self.data_entry_scroll_frame.grid_size()[1]
+
+        new_entry_row = num_rows - 1
+
+        self.add_column_button.grid_configure(rowspan=num_rows)
+
+        self.add_row_button.grid(row=num_rows, pady=10, sticky="we")
+
+        label_text = f"Row {new_entry_row}"
+        label = customtkinter.CTkLabel(
+            self.data_entry_scroll_frame, text=label_text, padx=10, pady=5
+        )
+        label.grid(row=new_entry_row, column=0, sticky="w")
+
+        for j in range(1, entry_cols):
+            entry = customtkinter.CTkEntry(self.data_entry_scroll_frame)
+            entry.grid(row=new_entry_row, column=j, padx=10, pady=5)
+
+    def add_column(self):
+        num_cols = self.data_entry_scroll_frame.grid_size()[0]
+        entry_rows = self.data_entry_scroll_frame.grid_size()[1] - 1
+
+        new_entry_col = num_cols - 1
+
+        self.add_row_button.grid_configure(columnspan=num_cols)
+
+        self.add_column_button.grid(column=num_cols, pady=10, sticky="ns")
+
+        for j in range(0, entry_rows):
+            entry = customtkinter.CTkEntry(self.data_entry_scroll_frame)
+            entry.grid(row=j, column=new_entry_col, padx=10, pady=5)
 
     # TODO: Refactor this function with choose_destination_folder()
     def choose_template_file(self):
