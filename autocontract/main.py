@@ -3,6 +3,7 @@ from datetime import datetime
 
 import pandas as pd
 from docx import Document
+from docx2pdf import convert
 
 
 def replace_text_in_docx(doc, old_text, new_text):
@@ -15,13 +16,13 @@ def replace_text_in_docx(doc, old_text, new_text):
 def format_date(date_value, output_format="%d/%m/%Y"):
     # Convert the date to a string with the desired format
     if pd.notna(date_value):
-        date_object = pd.to_datetime(date_value)
+        date_object = pd.to_datetime(date_value, dayfirst=True)
         return date_object.strftime(output_format)
     else:
         return ""
 
 
-def create_word_document(
+def create_document(
     person_name,
     dob,
     passport,
@@ -45,23 +46,24 @@ def create_word_document(
     replace_text_in_docx(doc, "PP_EX", formatted_pp_ex)
 
     # Output file path
-    output_path = os.path.join(output_dir, f"CTTC_{person_name}.docx")
+    output_path = os.path.join(output_dir, f"PTC_EN_{person_name}.docx")
 
     try:
         # Save the modified document
         doc.save(output_path)
         print(f"Document for {person_name} saved to: {output_path}")
+        # TODO: convert is slow
+        # TODO: Generate filename inside PDF Reader with a lot of 0000\0000
+        convert(output_path)
     except PermissionError as e:
         print(f"Permission error: {e}")
 
 
 def main():
-    # Variables for the name and age
-    person_name = "John Doe"
-    person_age = "30"
-
     # Load the Word template
-    template_path = os.path.join(os.path.dirname(__file__), "input", "template.docx")
+    template_path = os.path.join(
+        os.path.dirname(__file__), "input", "template_en_unlock.docx"
+    )
     if not os.path.isfile(template_path):
         print(f"Error: Template file not found at {template_path}")
         return
@@ -97,7 +99,7 @@ def main():
         passport = str(row["PASSPORT"])
         passport_exp = row["PP EX"]
 
-        create_word_document(
+        create_document(
             person_name, dob, passport, passport_exp, template_path, output_dir
         )
 

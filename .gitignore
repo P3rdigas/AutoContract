@@ -1,5 +1,6 @@
 autocontract/examples/*
 autocontract/input/*
+autocontract/input_old/*
 autocontract/output/*
 
 # Ignores INI files
