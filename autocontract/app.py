@@ -495,7 +495,7 @@ class AutoContract(customtkinter.CTk):
         )
         label.grid(row=new_entry_row, column=0, sticky="w")
 
-        for j in range(1, entry_cols):
+        for j in range(1, entry_cols + 1):
             entry = customtkinter.CTkEntry(self.data_entry_scroll_frame)
             entry.grid(row=new_entry_row, column=j, padx=10, pady=5)
 
