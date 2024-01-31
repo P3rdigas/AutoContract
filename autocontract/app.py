@@ -531,6 +531,7 @@ class AutoContract(customtkinter.CTk):
             label_width = self.TEMPLATE_FILE_NAME_WIDTH
             if text_width > self.TEMPLATE_FILE_NAME_WIDTH:
                 # Less one (approximately three dots size in pixels)
+                # TODO: Problems with chars outside ASCII could raise problems (like ã, é ...)
                 text = (
                     filename[: int(label_width / (text_width / len(filename))) - 1]
                     + "..."
