@@ -21,6 +21,7 @@ class AutoContract(customtkinter.CTk):
 
     START_ENTRY_NUM = 3
 
+    INFO_BUTTON_ICON_SIZE = (16, 16)
     ADD_ENTRY_ICON_SIZE = (16, 16)
 
     # Colors first correspond to Light Mode and second to Dark Mode
@@ -35,6 +36,17 @@ class AutoContract(customtkinter.CTk):
 
     NO_FOLDER_SELECTED = "No folder selected"
     NO_FILE_SELECTED = "No file selected"
+
+    DATA_INFO_MESSAGE = "Is not mandatory to import a data file. The names of the variables (in the table) must be equal to the word to be replaced in the template."
+
+    INFO_BUTTON_LIGHT_PATH = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "assets/icons/info-black.png",
+    )
+    INFO_BUTTON_DARK_PATH = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "assets/icons/info-white.png",
+    )
 
     ADD_ENTRY_LIGHT_PATH = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
@@ -253,6 +265,35 @@ class AutoContract(customtkinter.CTk):
             data_header_label_frame, text="② Data"
         )
 
+        info_button_image = customtkinter.CTkImage(
+            light_image=Image.open(self.INFO_BUTTON_LIGHT_PATH),
+            dark_image=Image.open(self.INFO_BUTTON_DARK_PATH),
+            size=self.INFO_BUTTON_ICON_SIZE,
+        )
+
+        data_header_label_info = customtkinter.CTkButton(
+            data_header_label_frame,
+            text="",
+            image=info_button_image,
+            fg_color="transparent",
+            width=0,
+            height=0,
+            hover=False,
+        )
+
+        info_button_tooltip = CTkToolTip(
+            data_header_label_info,
+            message=self.DATA_INFO_MESSAGE,
+            corner_radius=5,
+            border_width=1,
+            border_color=self.TOOLTIP_BORDER_COLOR,
+        )
+
+        data_header_label_info.bind(
+            "<Enter>",
+            lambda event: self.on_enter(event, info_button_tooltip),
+        )
+
         data_header_controls_frame = customtkinter.CTkFrame(
             data_header_frame,
             corner_radius=0,
@@ -434,7 +475,8 @@ class AutoContract(customtkinter.CTk):
             row=0, column=num_cols, rowspan=num_rows, padx=10, sticky="ns"
         )
 
-        data_header_label.pack(side="left", padx=10)
+        data_header_label.pack(side="left", padx=(10, 0))
+        data_header_label_info.pack(side="left")
         data_header_label_frame.place(x=0, y=0, relheight=0.5, relwidth=1)
         data_header_controls_frame.place(x=0, rely=0.5, relheight=0.5, relwidth=1)
         data_header_frame.pack(fill="x")
@@ -606,6 +648,7 @@ class AutoContract(customtkinter.CTk):
 
 def main():
     # TODO: Credits for <a href="https://www.flaticon.com/free-icons/plus" title="plus icons">Plus icons created by Fuzzee - Flaticon</a>
+    # TODO: Credits for <a href="https://www.flaticon.com/free-icons/info" title="info icons">Info icons created by Graphics Plazza - Flaticon</a>
     app = AutoContract()
     app.mainloop()
 
