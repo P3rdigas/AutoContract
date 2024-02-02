@@ -69,18 +69,16 @@ class AutoContract(customtkinter.CTk):
         self.load_configuration()
 
         # Set Menubar
+        # TODO: Finish MenuBar
         self.toolbar = CTkMenuBar(master=self, bg_color=self.MENUBAR_BACKGROUND_COLOR)
         self.file_button = self.toolbar.add_cascade(
-            "File",
-            hover_color=self.HOVER_COLOR,
+            text="File", hover_color=self.HOVER_COLOR
         )
         self.settings_button = self.toolbar.add_cascade(
-            "Settings",
-            hover_color=self.HOVER_COLOR,
+            text="Settings", hover_color=self.HOVER_COLOR
         )
         self.about_button = self.toolbar.add_cascade(
-            "About",
-            hover_color=self.HOVER_COLOR,
+            text="About", hover_color=self.HOVER_COLOR
         )
 
         self.file_button_dropdown = CustomDropdownMenu(
@@ -89,9 +87,11 @@ class AutoContract(customtkinter.CTk):
             bg_color=self.DROPDOWN_BACKGROUND_COLOR,
             hover_color=self.HOVER_COLOR,
         )
-        self.file_button_dropdown.add_option(option="Import")
-        self.file_button_dropdown.add_option(option="Export")
-        self.file_button_dropdown.add_option(option="Exit", command=self.destroy)
+        self.file_button_dropdown.add_option(option="Import", corner_radius=0)
+        self.file_button_dropdown.add_option(option="Export", corner_radius=0)
+        self.file_button_dropdown.add_option(
+            option="Exit", command=self.destroy, corner_radius=0
+        )
 
         self.settings_button_dropdown = CustomDropdownMenu(
             widget=self.settings_button,
@@ -101,13 +101,19 @@ class AutoContract(customtkinter.CTk):
         )
         appearance_sub_menu = self.settings_button_dropdown.add_submenu("Appearance")
         appearance_sub_menu.add_option(
-            option="Light", command=lambda: self.change_appearance_mode_event("light")
+            option="Light",
+            command=lambda: self.change_appearance_mode_event("light"),
+            corner_radius=0,
         )
         appearance_sub_menu.add_option(
-            option="Dark", command=lambda: self.change_appearance_mode_event("dark")
+            option="Dark",
+            command=lambda: self.change_appearance_mode_event("dark"),
+            corner_radius=0,
         )
         appearance_sub_menu.add_option(
-            option="System", command=lambda: self.change_appearance_mode_event("system")
+            option="System",
+            command=lambda: self.change_appearance_mode_event("system"),
+            corner_radius=0,
         )
 
         github_icon_light_path = os.path.join(
@@ -131,7 +137,10 @@ class AutoContract(customtkinter.CTk):
             hover_color=self.HOVER_COLOR,
         )
         self.about_button_dropdown.add_option(
-            option="Source Code", image=github_image, command=self.open_browser
+            option="Source Code",
+            command=self.open_browser,
+            image=github_image,
+            corner_radius=0,
         )
 
         # Layout (Template Frame(100px), Data Frame(what's left), Destination Frame(100px with generate button))
@@ -255,9 +264,10 @@ class AutoContract(customtkinter.CTk):
         # TODO: Change to scrollable X & Y
         # TODO: Scrollable X & Y background color transparent
         # TODO: Stop scroll when has few elements
-        # TODO: Enable horizontal scroll with Sfhit+Wheel
+        # TODO: Enable horizontal and vertical scroll with Sfhit+Wheel
         # TODO: Add button to delete row/column
         # TODO: Add tooltip for each Entry
+        # TODO: Size of column labels must be the same (Row1000000000 should cut the text like the folders name in 1 and 3)
         self.data_entry_scroll_frame = CTkXYFrame(
             data_frame,
             corner_radius=0,
