@@ -254,6 +254,10 @@ class AutoContract(customtkinter.CTk):
 
         # TODO: Change to scrollable X & Y
         # TODO: Scrollable X & Y background color transparent
+        # TODO: Stop scroll when has few elements
+        # TODO: Enable horizontal scroll with Sfhit+Wheel
+        # TODO: Add button to delete row/column
+        # TODO: Add tooltip for each Entry
         self.data_entry_scroll_frame = CTkXYFrame(
             data_frame,
             corner_radius=0,
