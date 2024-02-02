@@ -260,7 +260,6 @@ class AutoContract(customtkinter.CTk):
         )
 
         # Unicode symbols: http://xahlee.info/comp/unicode_circled_numbers.html
-        # TODO: Add button for a tooltip to explain how to add data
         data_header_label = customtkinter.CTkLabel(
             data_header_label_frame, text="② Data"
         )
@@ -281,6 +280,7 @@ class AutoContract(customtkinter.CTk):
             hover=False,
         )
 
+        # TODO: Refactor width and spacing for the tooltip
         info_button_tooltip = CTkToolTip(
             data_header_label_info,
             message=self.DATA_INFO_MESSAGE,
