@@ -37,7 +37,7 @@ class AutoContract(customtkinter.CTk):
     NO_FOLDER_SELECTED = "No folder selected"
     NO_FILE_SELECTED = "No file selected"
 
-    DATA_INFO_MESSAGE = "Is not mandatory to import a data file. The names of the variables (in the table) must be equal to the word to be replaced in the template."
+    DATA_INFO_MESSAGE = "The names of the variables (in the table) must be equal to the word to be replaced in the template. Is not mandatory to import a data file. If you still want to import, make sure the first the row is for variables and the rest for the data"
 
     INFO_BUTTON_LIGHT_PATH = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
@@ -168,6 +168,7 @@ class AutoContract(customtkinter.CTk):
             template_frame, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
         )
 
+        # TODO: Should be?
         # Unicode symbols: http://xahlee.info/comp/unicode_circled_numbers.html
         template_label = customtkinter.CTkLabel(template_label_frame, text="① Template")
 
@@ -182,17 +183,18 @@ class AutoContract(customtkinter.CTk):
         self.template_file = None
 
         # Default width of the label (can provide font),
-        self.TEMPLATE_FILE_NAME_WIDTH = self.get_width_text(self.NO_FILE_SELECTED)
+        self.TEMPLATE_FILENAME_WIDTH = self.get_width_text(self.NO_FILE_SELECTED)
 
+        # TODO: Should be?
         # Width: plus 1 (if width of label equals the width of the text the text you jump out by 1 px) and plus 10 (margin, 5 to the left, 5 to the right)
-        self.template_file_name_label = customtkinter.CTkLabel(
+        self.template_filename_label = customtkinter.CTkLabel(
             template_controls_frame,
-            width=self.TEMPLATE_FILE_NAME_WIDTH + 1 + 10,
+            width=self.TEMPLATE_FILENAME_WIDTH + 1 + 10,
             text=self.NO_FILE_SELECTED,
         )
 
-        self.template_file_name_label_tooltip = CTkToolTip(
-            self.template_file_name_label,
+        self.template_filename_label_tooltip = CTkToolTip(
+            self.template_filename_label,
             message=None,
             corner_radius=5,
             border_width=1,
@@ -200,11 +202,11 @@ class AutoContract(customtkinter.CTk):
         )
 
         # If the text is smaller than the label width no need to show a tooltip
-        self.template_file_name_label_tooltip.hide()
+        self.template_filename_label_tooltip.hide()
 
-        self.template_file_name_label.bind(
+        self.template_filename_label.bind(
             "<Enter>",
-            lambda event: self.on_enter(event, self.template_file_name_label_tooltip),
+            lambda event: self.on_enter(event, self.template_filename_label_tooltip),
         )
 
         # TODO: Set a better color
@@ -259,6 +261,7 @@ class AutoContract(customtkinter.CTk):
             fg_color=self.FRAMES_BACKGROUND_COLOR,
         )
 
+        # TODO: Should be?
         # Unicode symbols: http://xahlee.info/comp/unicode_circled_numbers.html
         data_header_label = customtkinter.CTkLabel(
             data_header_label_frame, text="② Data"
@@ -301,6 +304,60 @@ class AutoContract(customtkinter.CTk):
         )
 
         # TODO: Add import csv files as data
+        data_file_label = customtkinter.CTkLabel(
+            data_header_controls_frame, text="Data file:"
+        )
+
+        self.data_file = None
+
+        # Default width of the label (can provide font),
+        self.DATA_FILENAME_WIDTH = self.get_width_text(self.NO_FILE_SELECTED)
+
+        # TODO: Should be?
+        # # Width: plus 1 (if width of label equals the width of the text the text you jump out by 1 px) and plus 10 (margin, 5 to the left, 5 to the right)
+        self.data_filename_label = customtkinter.CTkLabel(
+            data_header_controls_frame,
+            width=self.DATA_FILENAME_WIDTH + 1 + 10,
+            text=self.NO_FILE_SELECTED,
+        )
+
+        self.data_filename_label_tooltip = CTkToolTip(
+            self.data_filename_label,
+            message=None,
+            corner_radius=5,
+            border_width=1,
+            border_color=self.TOOLTIP_BORDER_COLOR,
+        )
+
+        # If the text is smaller than the label width no need to show a tooltip
+        self.data_filename_label_tooltip.hide()
+
+        self.data_filename_label.bind(
+            "<Enter>",
+            lambda event: self.on_enter(event, self.data_filename_label_tooltip),
+        )
+
+        # TODO: Set a better color
+        # Width to 1 so the button takes the width of the text
+        data_file_button = customtkinter.CTkButton(
+            data_header_controls_frame,
+            width=1,
+            text="Choose file",
+            # fg_color="transparent",
+            hover_color=self.HOVER_COLOR,
+            command=self.choose_data_file,
+        )
+
+        # TODO: Set a better color
+        # Width to 1 so the button takes the width of the text
+        data_file_clear_button = customtkinter.CTkButton(
+            data_header_controls_frame,
+            width=1,
+            text="Reset",
+            # fg_color="transparent",
+            hover_color=self.HOVER_COLOR,
+            command=self.reset_data_file,
+        )
 
         # TODO: Change to scrollable X & Y
         # TODO: Scrollable X & Y background color transparent
@@ -309,6 +366,7 @@ class AutoContract(customtkinter.CTk):
         # TODO: Add button to delete row/column
         # TODO: Add tooltip for each Entry
         # TODO: Size of column labels must be the same (Row1000000000 should cut the text like the folders name in 1 and 3)
+        # TODO: Add button to change variable type (string, number, date, etc)
         self.data_entry_scroll_frame = CTkXYFrame(
             data_frame,
             corner_radius=0,
@@ -371,6 +429,7 @@ class AutoContract(customtkinter.CTk):
             destination_frame, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
         )
 
+        # TODO: Should be?
         # Unicode symbols: http://xahlee.info/comp/unicode_circled_numbers.html
         destination_label = customtkinter.CTkLabel(
             destination_label_frame, text="③ Destination"
@@ -391,6 +450,7 @@ class AutoContract(customtkinter.CTk):
             self.NO_FOLDER_SELECTED
         )
 
+        # TODO: Should be?
         # Width: plus 1 (if width of label equals the width of the text the text you jump out by 1 px) and plus 10 (margin, 5 to the left, 5 to the right)
         self.destination_folder_name_label = customtkinter.CTkLabel(
             destination_controls_frame,
@@ -454,7 +514,7 @@ class AutoContract(customtkinter.CTk):
         template_label_frame.place(x=0, y=0, relheight=0.5, relwidth=1)
         template_file_label.pack(side="left", padx=10)
         # Left padding 0px and right padding 10px
-        self.template_file_name_label.pack(side="left", padx=(0, 10))
+        self.template_filename_label.pack(side="left", padx=(0, 10))
         template_file_button.pack(side="left", padx=(0, 5))
         template_file_clear_button.pack(side="left")
         template_controls_frame.place(x=0, rely=0.5, relheight=0.5, relwidth=1)
@@ -479,6 +539,10 @@ class AutoContract(customtkinter.CTk):
         data_header_label_info.pack(side="left")
         data_header_label_frame.place(x=0, y=0, relheight=0.5, relwidth=1)
         data_header_controls_frame.place(x=0, rely=0.5, relheight=0.5, relwidth=1)
+        data_file_label.pack(side="left", padx=10)
+        self.data_filename_label.pack(side="left", padx=(0, 10))
+        data_file_button.pack(side="left", padx=(0, 5))
+        data_file_clear_button.pack(side="left")
         data_header_frame.pack(fill="x")
         self.data_entry_scroll_frame.pack(expand=True, fill="both")
         data_frame.pack(expand=True, fill="both")
@@ -584,8 +648,8 @@ class AutoContract(customtkinter.CTk):
 
             text_width = self.get_width_text(filename)
 
-            label_width = self.TEMPLATE_FILE_NAME_WIDTH
-            if text_width > self.TEMPLATE_FILE_NAME_WIDTH:
+            label_width = self.TEMPLATE_FILENAME_WIDTH
+            if text_width > self.TEMPLATE_FILENAME_WIDTH:
                 # Less one (approximately three dots size in pixels)
                 # TODO: Problems with chars outside ASCII could raise problems (like ã, é ...)
                 text = (
@@ -593,23 +657,66 @@ class AutoContract(customtkinter.CTk):
                     + "..."
                 )
 
-                self.template_file_name_label.configure(text=text)
-                self.template_file_name_label_tooltip.configure(message=filename)
+                self.template_filename_label.configure(text=text)
+                self.template_filename_label_tooltip.configure(message=filename)
 
-                if self.template_file_name_label_tooltip.is_disabled():
-                    self.template_file_name_label_tooltip.show()
+                if self.template_filename_label_tooltip.is_disabled():
+                    self.template_filename_label_tooltip.show()
             else:
-                self.template_file_name_label.configure(text=filename)
-                self.template_file_name_label_tooltip.hide()
+                self.template_filename_label.configure(text=filename)
+                self.template_filename_label_tooltip.hide()
 
     # TODO: Refactor this function with reset_destination_folder()
     def reset_template_file(self):
         if self.template_file is not None:
             self.template_file = None
-            self.template_file_name_label.configure(text=self.NO_FILE_SELECTED)
-            self.template_file_name_label_tooltip.configure(message=None)
-            self.template_file_name_label_tooltip.hide()
+            self.template_filename_label.configure(text=self.NO_FILE_SELECTED)
+            self.template_filename_label_tooltip.configure(message=None)
+            self.template_filename_label_tooltip.hide()
 
+    # TODO: Refactor this function with reset_template_file() and reset_destination_folder()
+    def choose_data_file(self):
+        print("Choosing data files")
+        # app_path = os.path.dirname(os.path.abspath(__file__))
+
+        # file = filedialog.askopenfile(
+        #     initialdir=app_path, filetypes=[("Word files", ".docx")]
+        # )
+
+        # if file:
+        #     self.template_file = file
+
+        #     filename = os.path.basename(file.name)
+
+        #     text_width = self.get_width_text(filename)
+
+        #     label_width = self.TEMPLATE_FILENAME_WIDTH
+        #     if text_width > self.TEMPLATE_FILENAME_WIDTH:
+        #         # Less one (approximately three dots size in pixels)
+        #         # TODO: Problems with chars outside ASCII could raise problems (like ã, é ...)
+        #         text = (
+        #             filename[: int(label_width / (text_width / len(filename))) - 1]
+        #             + "..."
+        #         )
+
+        #         self.template_filename_label.configure(text=text)
+        #         self.template_filename_label_tooltip.configure(message=filename)
+
+        #         if self.template_filename_label_tooltip.is_disabled():
+        #             self.template_filename_label_tooltip.show()
+        #     else:
+        #         self.template_filename_label.configure(text=filename)
+        #         self.template_filename_label_tooltip.hide()
+
+    # TODO: Refactor this function with reset_template_file() and reset_destination_folder()
+    def reset_data_file(self):
+        if self.data_file is not None:
+            self.data_file = None
+            self.data_filename_label.configure(text=self.NO_FILE_SELECTED)
+            self.data_filename_label_tooltip.configure(message=None)
+            self.data_filename_label_tooltip.hide()
+
+    # TODO: Refactor this function with choose_template_file() and choose_data_file()
     def choose_destination_folder(self):
         app_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -635,6 +742,7 @@ class AutoContract(customtkinter.CTk):
                 self.destination_folder_name_label.configure(text=folder)
                 self.destination_folder_name_label_tooltip.hide()
 
+    # TODO: Refactor this function with reset_template_file() and reset_destination_folder()
     def reset_destination_folder(self):
         if self.destination_folder is not None:
             self.destination_folder = None
