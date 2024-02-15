@@ -2,6 +2,7 @@ import configparser
 import os
 import webbrowser
 from tkinter import filedialog
+import pandas as pd
 
 import customtkinter
 from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
@@ -367,6 +368,7 @@ class AutoContract(customtkinter.CTk):
         # TODO: Add tooltip for each Entry
         # TODO: Size of column labels must be the same (Row1000000000 should cut the text like the folders name in 1 and 3)
         # TODO: Add button to change variable type (string, number, date, etc)
+        # TODO: Search by field and/or button to go to the end
         self.data_entry_scroll_frame = CTkXYFrame(
             data_frame,
             corner_radius=0,
@@ -676,37 +678,68 @@ class AutoContract(customtkinter.CTk):
 
     # TODO: Refactor this function with reset_template_file() and reset_destination_folder()
     def choose_data_file(self):
-        print("Choosing data files")
-        # app_path = os.path.dirname(os.path.abspath(__file__))
+        app_path = os.path.dirname(os.path.abspath(__file__))
 
-        # file = filedialog.askopenfile(
-        #     initialdir=app_path, filetypes=[("Word files", ".docx")]
-        # )
+        file = filedialog.askopenfile(
+            initialdir=app_path, filetypes=[("Excel files", ".xlsx")]
+        )
 
-        # if file:
-        #     self.template_file = file
+        if file:
+            self.data_file = file
 
-        #     filename = os.path.basename(file.name)
+            filename = os.path.basename(file.name)
 
-        #     text_width = self.get_width_text(filename)
+            text_width = self.get_width_text(filename)
 
-        #     label_width = self.TEMPLATE_FILENAME_WIDTH
-        #     if text_width > self.TEMPLATE_FILENAME_WIDTH:
-        #         # Less one (approximately three dots size in pixels)
-        #         # TODO: Problems with chars outside ASCII could raise problems (like ã, é ...)
-        #         text = (
-        #             filename[: int(label_width / (text_width / len(filename))) - 1]
-        #             + "..."
-        #         )
+            label_width = self.DATA_FILENAME_WIDTH
+            if text_width > self.DATA_FILENAME_WIDTH:
+                # Less one (approximately three dots size in pixels)
+                # TODO: Problems with chars outside ASCII could raise problems (like ã, é ...)
+                text = (
+                    filename[: int(label_width / (text_width / len(filename))) - 1]
+                    + "..."
+                )
 
-        #         self.template_filename_label.configure(text=text)
-        #         self.template_filename_label_tooltip.configure(message=filename)
+                self.data_filename_label.configure(text=text)
+                self.data_filename_label_tooltip.configure(message=filename)
 
-        #         if self.template_filename_label_tooltip.is_disabled():
-        #             self.template_filename_label_tooltip.show()
-        #     else:
-        #         self.template_filename_label.configure(text=filename)
-        #         self.template_filename_label_tooltip.hide()
+                if self.data_filename_label_tooltip.is_disabled():
+                    self.data_filename_label_tooltip.show()
+            else:
+                self.data_filename_label.configure(text=filename)
+                self.data_filename_label_tooltip.hide()
+
+            self.import_data(file.name)
+
+    def import_data(self, file_path):
+        print("Importing data")
+        entry_cols = self.data_entry_scroll_frame.grid_size()[0] - 2
+        entry_rows = self.data_entry_scroll_frame.grid_size()[1] - 1
+
+        df = pd.read_excel(file_path)
+
+        excel_num_rows, excel_num_columns = df.shape
+        variables = df.columns
+
+        while entry_cols < excel_num_columns:
+            self.add_column()
+            entry_cols += 1
+
+        while entry_rows <= excel_num_rows:
+            self.add_row()
+            entry_rows += 1
+
+        frame_widgets = self.data_entry_scroll_frame.winfo_children()
+        for widget in frame_widgets:
+            if type(widget) == customtkinter.CTkEntry:
+                row_index = widget.grid_info()["row"]
+                col_index = widget.grid_info()["column"]
+
+                if row_index == 0:
+                    widget.insert(0, variables[col_index - 1])
+                else:
+                    data = df.iloc[row_index - 1, col_index - 1]
+                    widget.insert(0, data)
 
     # TODO: Refactor this function with reset_template_file() and reset_destination_folder()
     def reset_data_file(self):
@@ -715,6 +748,8 @@ class AutoContract(customtkinter.CTk):
             self.data_filename_label.configure(text=self.NO_FILE_SELECTED)
             self.data_filename_label_tooltip.configure(message=None)
             self.data_filename_label_tooltip.hide()
+
+        # TODO: Clear table
 
     # TODO: Refactor this function with choose_template_file() and choose_data_file()
     def choose_destination_folder(self):
