@@ -1,7 +1,7 @@
 import configparser
 import os
 import webbrowser
-from tkinter import filedialog
+from tkinter import filedialog, END
 import pandas as pd
 
 import customtkinter
@@ -712,7 +712,6 @@ class AutoContract(customtkinter.CTk):
             self.import_data(file.name)
 
     def import_data(self, file_path):
-        print("Importing data")
         entry_cols = self.data_entry_scroll_frame.grid_size()[0] - 2
         entry_rows = self.data_entry_scroll_frame.grid_size()[1] - 1
 
@@ -749,7 +748,40 @@ class AutoContract(customtkinter.CTk):
             self.data_filename_label_tooltip.configure(message=None)
             self.data_filename_label_tooltip.hide()
 
-        # TODO: Clear table
+            self.data_entry_scroll_frame.update_idletasks()
+
+            frame_widgets = self.data_entry_scroll_frame.winfo_children()
+            for widget in frame_widgets:
+                row_index = widget.grid_info()["row"]
+                col_index = widget.grid_info()["column"]
+
+                if row_index > 3 or col_index > 2:
+                    if type(widget) != customtkinter.CTkButton:
+                        widget.destroy()
+                else:
+                    if type(widget) == customtkinter.CTkEntry:
+                        widget.delete(0, END)
+
+            self.data_entry_scroll_frame.update_idletasks()
+
+            num_cols = self.data_entry_scroll_frame.grid_size()[0]
+            num_rows = self.data_entry_scroll_frame.grid_size()[1]
+            print(f"Num_Cols: {num_cols} Num_Rows: {num_rows}")
+
+            # # Update add row and column buttons
+            # for widget in frame_widgets:
+            #     if type(widget) == customtkinter.CTkButton:
+            #         row_index = widget.grid_info()["row"]
+            #         col_index = widget.grid_info()["column"]
+            #         if row_index == 0:
+            #             widget.grid_configure(column=num_cols, rowspan=num_rows)
+            #         elif col_index == 0:
+            #             widget.grid_configure(row=num_rows, columnspan=num_cols)
+
+            # frame_widgets = self.data_entry_scroll_frame.winfo_children()
+            # for widget in frame_widgets:
+            #     print(type(widget))
+            #     print(widget.grid_info())
 
     # TODO: Refactor this function with choose_template_file() and choose_data_file()
     def choose_destination_folder(self):
