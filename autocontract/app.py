@@ -20,7 +20,13 @@ class AutoContract(customtkinter.CTk):
     DATA_ADD_BUTTON_SIZE = 30
     DESTINATION_FRAME_HEIGHT = 75
 
-    START_ENTRY_NUM = 3
+    START_ENTRY_ROW_NUM = 4
+    START_ENTRY_COL_NUM = 2
+
+    START_ROW_SPAN = START_ENTRY_ROW_NUM
+
+    # Plus 2 because the labels column
+    START_COL_SPAN = START_ENTRY_COL_NUM + 1
 
     INFO_BUTTON_ICON_SIZE = (16, 16)
     ADD_ENTRY_ICON_SIZE = (16, 16)
@@ -376,7 +382,7 @@ class AutoContract(customtkinter.CTk):
         )
 
         labels = ["Variables"] + [
-            f"Row {i}" for i in range(1, self.START_ENTRY_NUM + 1)
+            f"Row {i}" for i in range(1, self.START_ENTRY_ROW_NUM)
         ]
         for i, label_text in enumerate(labels):
             label = customtkinter.CTkLabel(
@@ -384,7 +390,8 @@ class AutoContract(customtkinter.CTk):
             )
             label.grid(row=i, column=0, sticky="w")
 
-            for j in range(1, self.START_ENTRY_NUM):
+            # Plus one because the column in index 0 is for the labels
+            for j in range(1, self.START_ENTRY_COL_NUM + 1):
                 entry = customtkinter.CTkEntry(self.data_entry_scroll_frame)
                 entry.grid(row=i, column=j, padx=10, pady=5)
 
@@ -530,11 +537,19 @@ class AutoContract(customtkinter.CTk):
         num_rows = self.data_entry_scroll_frame.grid_size()[1]
 
         self.add_row_button.grid(
-            row=num_rows, column=0, columnspan=num_cols, pady=10, sticky="we"
+            row=num_rows,
+            column=0,
+            columnspan=self.START_COL_SPAN,
+            pady=10,
+            sticky="we",
         )
 
         self.add_column_button.grid(
-            row=0, column=num_cols, rowspan=num_rows, padx=10, sticky="ns"
+            row=0,
+            column=num_cols,
+            rowspan=self.START_ROW_SPAN,
+            padx=10,
+            sticky="ns",
         )
 
         data_header_label.pack(side="left", padx=(10, 0))
@@ -748,40 +763,32 @@ class AutoContract(customtkinter.CTk):
             self.data_filename_label_tooltip.configure(message=None)
             self.data_filename_label_tooltip.hide()
 
-            self.data_entry_scroll_frame.update_idletasks()
-
             frame_widgets = self.data_entry_scroll_frame.winfo_children()
             for widget in frame_widgets:
                 row_index = widget.grid_info()["row"]
                 col_index = widget.grid_info()["column"]
 
                 if row_index > 3 or col_index > 2:
-                    if type(widget) != customtkinter.CTkButton:
+                    if not isinstance(widget, customtkinter.CTkButton):
                         widget.destroy()
                 else:
-                    if type(widget) == customtkinter.CTkEntry:
+                    if isinstance(widget, customtkinter.CTkEntry):
                         widget.delete(0, END)
 
-            self.data_entry_scroll_frame.update_idletasks()
-
-            num_cols = self.data_entry_scroll_frame.grid_size()[0]
-            num_rows = self.data_entry_scroll_frame.grid_size()[1]
-            print(f"Num_Cols: {num_cols} Num_Rows: {num_rows}")
-
-            # # Update add row and column buttons
-            # for widget in frame_widgets:
-            #     if type(widget) == customtkinter.CTkButton:
-            #         row_index = widget.grid_info()["row"]
-            #         col_index = widget.grid_info()["column"]
-            #         if row_index == 0:
-            #             widget.grid_configure(column=num_cols, rowspan=num_rows)
-            #         elif col_index == 0:
-            #             widget.grid_configure(row=num_rows, columnspan=num_cols)
-
-            # frame_widgets = self.data_entry_scroll_frame.winfo_children()
-            # for widget in frame_widgets:
-            #     print(type(widget))
-            #     print(widget.grid_info())
+                # TODO: If the user is in the right extreme and bottom extreme and the scroll is bigger
+                #       then the initially table, the user has to scroll up of to the left to update the frame
+                # Update row and column span to update the grid size
+                if isinstance(widget, customtkinter.CTkButton):
+                    if row_index == 0:
+                        # Plus 1 because the column with index 0 is for the labels
+                        widget.grid_configure(
+                            column=self.START_ENTRY_COL_NUM + 1,
+                            rowspan=self.START_ROW_SPAN,
+                        )
+                    elif col_index == 0:
+                        widget.grid_configure(
+                            row=self.START_ENTRY_ROW_NUM, columnspan=self.START_COL_SPAN
+                        )
 
     # TODO: Refactor this function with choose_template_file() and choose_data_file()
     def choose_destination_folder(self):
