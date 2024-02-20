@@ -3,3 +3,6 @@
 
 # Ignores app test files
 app_test.py
+
+# Output test folder
+autocontract/output/*

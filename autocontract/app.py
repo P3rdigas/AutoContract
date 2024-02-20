@@ -1,8 +1,10 @@
 import configparser
 import os
 import webbrowser
-from tkinter import filedialog, END
+from tkinter import filedialog, END, NORMAL, DISABLED
 import pandas as pd
+from docx import Document
+from docx2pdf import convert
 
 import customtkinter
 from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
@@ -250,6 +252,8 @@ class AutoContract(customtkinter.CTk):
         )
 
         # Data Frame
+        # TODO: Check if data is valid
+        self.data = []
         data_frame = customtkinter.CTkFrame(
             self, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
         )
@@ -507,6 +511,15 @@ class AutoContract(customtkinter.CTk):
             command=self.reset_destination_folder,
         )
 
+        self.pdf_value = customtkinter.StringVar(value=1)
+        self.pdf_checkbox = customtkinter.CTkCheckBox(
+            destination_controls_frame,
+            text="Create PDF file",
+            variable=self.pdf_value,
+            onvalue=1,
+            offvalue=0,
+        )
+
         # TODO: Set a better color
         # Width to 1 so the button takes the width of the text
         destination_generate_button = customtkinter.CTkButton(
@@ -575,6 +588,7 @@ class AutoContract(customtkinter.CTk):
         destination_folder_button.pack(side="left", padx=(0, 5))
         destination_folder_clear_button.pack(side="left")
         destination_generate_button.pack(side="right", padx=(0, 10))
+        self.pdf_checkbox.pack(side="right", padx=(0, 10))
         destination_controls_frame.place(x=0, rely=0.5, relheight=0.5, relwidth=1)
         destination_frame.pack(fill="x")
 
@@ -735,6 +749,9 @@ class AutoContract(customtkinter.CTk):
         excel_num_rows, excel_num_columns = df.shape
         variables = df.columns
 
+        # Plus one for variables
+        self.data = [[None] * excel_num_columns for _ in range(excel_num_rows + 1)]
+
         while entry_cols < excel_num_columns:
             self.add_column()
             entry_cols += 1
@@ -745,15 +762,17 @@ class AutoContract(customtkinter.CTk):
 
         frame_widgets = self.data_entry_scroll_frame.winfo_children()
         for widget in frame_widgets:
-            if type(widget) == customtkinter.CTkEntry:
+            if isinstance(widget, customtkinter.CTkEntry):
                 row_index = widget.grid_info()["row"]
                 col_index = widget.grid_info()["column"]
 
                 if row_index == 0:
                     widget.insert(0, variables[col_index - 1])
+                    self.data[row_index][col_index - 1] = variables[col_index - 1]
                 else:
                     data = df.iloc[row_index - 1, col_index - 1]
                     widget.insert(0, data)
+                    self.data[row_index][col_index - 1] = data
 
     # TODO: Refactor this function with reset_template_file() and reset_destination_folder()
     def reset_data_file(self):
@@ -789,6 +808,7 @@ class AutoContract(customtkinter.CTk):
                         widget.grid_configure(
                             row=self.START_ENTRY_ROW_NUM, columnspan=self.START_COL_SPAN
                         )
+                self.data = []
 
     # TODO: Refactor this function with choose_template_file() and choose_data_file()
     def choose_destination_folder(self):
@@ -825,7 +845,40 @@ class AutoContract(customtkinter.CTk):
             self.destination_folder_name_label_tooltip.hide()
 
     def generate_contract(self):
-        print("Generating contract")
+        if self.template_file is None:
+            print("No template file selected")
+        elif not self.data:
+            print("No data")
+        elif self.destination_folder is None:
+            print("No destination folder selected")
+        else:
+            self.pdf_checkbox.configure(state=DISABLED)
+            # if self.pdf_value.get() == 1
+            variables = self.data[0]
+            for i, data_list in enumerate(self.data[1:], start=1):
+                doc = Document(self.template_file.name)
+                for j, data in enumerate(data_list):
+                    self.replace_text_in_docx(doc, variables[j], data)
+
+                # filename = os.path.basename(self.template_file.name)
+                output_path = os.path.join(self.destination_folder, f"OUTPUT_{i}.docx")
+                doc.save(output_path)
+
+                # TODO: Convert to pdf is slow, maybe use threads
+                # TODO: Test errors, like permisson errors
+                print(type(self.pdf_value.get()))
+                if self.pdf_value.get() == "1":
+                    print("ola")
+                    convert(output_path)
+
+            # TODO: Progress bar and final message
+            self.pdf_checkbox.configure(state=NORMAL)
+
+    def replace_text_in_docx(self, doc, old_text, new_text):
+        for paragraph in doc.paragraphs:
+            if old_text in paragraph.text:
+                for run in paragraph.runs:
+                    run.text = run.text.replace(old_text, new_text)
 
 
 def main():
