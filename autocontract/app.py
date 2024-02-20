@@ -866,9 +866,7 @@ class AutoContract(customtkinter.CTk):
 
                 # TODO: Convert to pdf is slow, maybe use threads
                 # TODO: Test errors, like permisson errors
-                print(type(self.pdf_value.get()))
                 if self.pdf_value.get() == "1":
-                    print("ola")
                     convert(output_path)
 
             # TODO: Progress bar and final message
