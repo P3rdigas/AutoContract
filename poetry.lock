@@ -54,6 +54,21 @@ reference = "poetry"
 resolved_reference = "3acc4ef07414d0f34aec3433a24f7fa223b53734"
 
 [[package]]
+name = "ctkmessagebox"
+version = "2.5"
+description = "A modern messagebox for customtkinter"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "CTkMessagebox-2.5-py3-none-any.whl", hash = "sha256:b3220c57bca16cec51d310e8d7cad9383dc36b30c943e5913f2e1f1644b6332e"},
+    {file = "CTkMessagebox-2.5.tar.gz", hash = "sha256:155c20e6ce0a1fd6ba43079db43e7f7bc124018f58141a15c993668aef6dae14"},
+]
+
+[package.dependencies]
+customtkinter = "*"
+pillow = "*"
+
+[[package]]
 name = "ctktooltip"
 version = "0.1.0"
 description = "Small pop-up widget for displaying details inside customtkinter."
@@ -581,4 +596,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "e87d1f149aa4816bdf8d45b4423efee8566f8ad07d80f45e2b0ae5b360b08027"
+content-hash = "14bf246ed6c90b80e76b72de07b9474d3566653e6b47ecf471aa8ee9c166987a"

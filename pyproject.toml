@@ -16,6 +16,7 @@ ctkmenubar = {git = "https://github.com/P3rdigas/CTkMenuBar.git", rev = "poetry"
 ctktooltip = {git = "https://github.com/P3rdigas/CTkToolTip-Poetry.git", rev = "poetry"}
 ctkxyframe = {git = "https://github.com/P3rdigas/CTkXYFrame.git", rev = "poetry"}
 docx2pdf = "^0.1.8"
+ctkmessagebox = "^2.5"
 
 
 [build-system]

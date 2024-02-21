@@ -10,6 +10,7 @@ import customtkinter
 from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
 from CTkToolTip import CTkToolTip
 from CTkXYFrame import CTkXYFrame
+from CTkMessagebox import CTkMessagebox
 from PIL import Image
 
 
@@ -511,7 +512,7 @@ class AutoContract(customtkinter.CTk):
             command=self.reset_destination_folder,
         )
 
-        self.pdf_value = customtkinter.StringVar(value=1)
+        self.pdf_value = customtkinter.StringVar(value=0)
         self.pdf_checkbox = customtkinter.CTkCheckBox(
             destination_controls_frame,
             text="Create PDF file",
@@ -740,6 +741,7 @@ class AutoContract(customtkinter.CTk):
 
             self.import_data(file.name)
 
+    # TODO: Import if the user type in the entries
     def import_data(self, file_path):
         entry_cols = self.data_entry_scroll_frame.grid_size()[0] - 2
         entry_rows = self.data_entry_scroll_frame.grid_size()[1] - 1
@@ -844,13 +846,40 @@ class AutoContract(customtkinter.CTk):
             self.destination_folder_name_label_tooltip.configure(message=None)
             self.destination_folder_name_label_tooltip.hide()
 
+    # TODO: Error boxes for warnings or errors
+    # TODO: Setting to disable sound (like the theme)
     def generate_contract(self):
         if self.template_file is None:
-            print("No template file selected")
+            # print("No template file selected")
+            CTkMessagebox(
+                title="Error",
+                message="No template file selected!",
+                icon="cancel",
+                sound=True,
+                option_focus=1,
+                cancel_button=None,
+                # cancel_button_color="transparent",
+            )
         elif not self.data:
-            print("No data")
+            CTkMessagebox(
+                title="Error",
+                message="No data!",
+                icon="cancel",
+                sound=True,
+                option_focus=1,
+                cancel_button=None,
+                # cancel_button_color="transparent",
+            )
         elif self.destination_folder is None:
-            print("No destination folder selected")
+            CTkMessagebox(
+                title="Error",
+                message="No destination folder selected!",
+                icon="cancel",
+                sound=True,
+                option_focus=1,
+                cancel_button=None,
+                # cancel_button_color="transparent",
+            )
         else:
             self.pdf_checkbox.configure(state=DISABLED)
             # if self.pdf_value.get() == 1
