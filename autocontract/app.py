@@ -13,8 +13,16 @@ from CTkXYFrame import CTkXYFrame
 from CTkMessagebox import CTkMessagebox
 from PIL import Image
 
+# CONSTANTS
+SEPARATOR_BACKGROUND_COLOR = "grey90", "black"
 
-class AutoContract(customtkinter.CTk):
+
+class ConfigHolder:
+    config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.ini")
+    config = configparser.ConfigParser()
+
+
+class AutoContract(customtkinter.CTk, ConfigHolder):
     APP_WIDTH = 800
     APP_HEIGHT = 600
 
@@ -38,7 +46,6 @@ class AutoContract(customtkinter.CTk):
     MENUBAR_BACKGROUND_COLOR = "white", "black"
     DROPDOWN_BACKGROUND_COLOR = "white", "grey20"
     FRAMES_BACKGROUND_COLOR = "transparent"
-    SEPARATOR_BACKGROUND_COLOR = "grey90", "black"
 
     TOOLTIP_BORDER_COLOR = "black", "white"
 
@@ -69,8 +76,8 @@ class AutoContract(customtkinter.CTk):
 
     SOURCE_CODE_URL = "https://github.com/P3rdigas/AutoContract"
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
         # Configure window
         self.title("AutoContract")
@@ -84,10 +91,8 @@ class AutoContract(customtkinter.CTk):
         self.resizable(width=False, height=False)
 
         # Loading config file
-        self.config_file = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "config.ini"
-        )
-        self.config = configparser.ConfigParser()
+        self.config_file = ConfigHolder.config_file
+        self.config = ConfigHolder.config
         self.load_configuration()
 
         # Set Menubar
@@ -96,8 +101,11 @@ class AutoContract(customtkinter.CTk):
         self.file_button = self.toolbar.add_cascade(
             text="File", hover_color=self.HOVER_COLOR
         )
+
+        self.settings_window = None
+
         self.settings_button = self.toolbar.add_cascade(
-            text="Settings", hover_color=self.HOVER_COLOR
+            text="Settings", hover_color=self.HOVER_COLOR, command=self.open_settings
         )
         self.about_button = self.toolbar.add_cascade(
             text="About", hover_color=self.HOVER_COLOR
@@ -115,28 +123,28 @@ class AutoContract(customtkinter.CTk):
             option="Exit", command=self.destroy, corner_radius=0
         )
 
-        self.settings_button_dropdown = CustomDropdownMenu(
-            widget=self.settings_button,
-            corner_radius=0,
-            bg_color=self.DROPDOWN_BACKGROUND_COLOR,
-            hover_color=self.HOVER_COLOR,
-        )
-        appearance_sub_menu = self.settings_button_dropdown.add_submenu("Appearance")
-        appearance_sub_menu.add_option(
-            option="Light",
-            command=lambda: self.change_appearance_mode_event("light"),
-            corner_radius=0,
-        )
-        appearance_sub_menu.add_option(
-            option="Dark",
-            command=lambda: self.change_appearance_mode_event("dark"),
-            corner_radius=0,
-        )
-        appearance_sub_menu.add_option(
-            option="System",
-            command=lambda: self.change_appearance_mode_event("system"),
-            corner_radius=0,
-        )
+        # self.settings_button_dropdown = CustomDropdownMenu(
+        #     widget=self.settings_button,
+        #     corner_radius=0,
+        #     bg_color=self.DROPDOWN_BACKGROUND_COLOR,
+        #     hover_color=self.HOVER_COLOR,
+        # )
+        # appearance_sub_menu = self.settings_button_dropdown.add_submenu("Appearance")
+        # appearance_sub_menu.add_option(
+        #     option="Light",
+        #     command=lambda: self.change_appearance_mode_event("light"),
+        #     corner_radius=0,
+        # )
+        # appearance_sub_menu.add_option(
+        #     option="Dark",
+        #     command=lambda: self.change_appearance_mode_event("dark"),
+        #     corner_radius=0,
+        # )
+        # appearance_sub_menu.add_option(
+        #     option="System",
+        #     command=lambda: self.change_appearance_mode_event("system"),
+        #     corner_radius=0,
+        # )
 
         github_icon_light_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "assets/icons/github-mark.png"
@@ -248,7 +256,7 @@ class AutoContract(customtkinter.CTk):
             self,
             corner_radius=0,
             height=1,
-            fg_color=self.SEPARATOR_BACKGROUND_COLOR,
+            fg_color=SEPARATOR_BACKGROUND_COLOR,
             border_width=1,
         )
 
@@ -427,7 +435,7 @@ class AutoContract(customtkinter.CTk):
             self,
             corner_radius=0,
             height=1,
-            fg_color=self.SEPARATOR_BACKGROUND_COLOR,
+            fg_color=SEPARATOR_BACKGROUND_COLOR,
             border_width=1,
         )
 
@@ -512,13 +520,13 @@ class AutoContract(customtkinter.CTk):
             command=self.reset_destination_folder,
         )
 
-        self.pdf_value = customtkinter.StringVar(value=0)
+        self.pdf_value = customtkinter.StringVar(value="0")
         self.pdf_checkbox = customtkinter.CTkCheckBox(
             destination_controls_frame,
             text="Create PDF file",
             variable=self.pdf_value,
-            onvalue=1,
-            offvalue=0,
+            onvalue="1",
+            offvalue="0",
         )
 
         # TODO: Set a better color
@@ -603,19 +611,12 @@ class AutoContract(customtkinter.CTk):
             elif theme == "light":
                 customtkinter.set_appearance_mode("light")
             else:
+                # TODO: If the person set an invalid name in the file that should be handle (MessageBox)
                 customtkinter.set_appearance_mode("dark")
         else:
             self.config["Settings"] = {"theme": "system"}
-            with open(self.config_file, "w") as configfile:
-                self.config.write(configfile)
-
-    def change_appearance_mode_event(self, new_appearance_mode):
-        customtkinter.set_appearance_mode(new_appearance_mode)
-
-        self.config.set("Settings", "theme", new_appearance_mode)
-
-        with open(self.config_file, "w") as configfile:
-            self.config.write(configfile)
+            with open(self.config_file, "w") as config_file:
+                self.config.write(config_file)
 
     def open_browser(self):
         webbrowser.open_new(self.SOURCE_CODE_URL)
@@ -907,10 +908,125 @@ class AutoContract(customtkinter.CTk):
                 for run in paragraph.runs:
                     run.text = run.text.replace(old_text, new_text)
 
+    def open_settings(self):
+        if self.settings_window is None or not self.settings_window.winfo_exists():
+            self.settings_window = SettingsTopLevel(
+                self
+            )  # create window if its None or destroyed
+            self.settings_window.bind(
+                "<Visibility>", lambda event: self.settings_window.focus()
+            )
+        else:
+            self.settings_window.focus()  # if window exists focus it
+
+
+class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
+    SETTINGS_WIDTH = 300
+    SETTINGS_HEIGHT = 300
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.config_file = ConfigHolder.config_file
+        self.config = ConfigHolder.config
+
+        self.title("Settings")
+
+        # CTk wait to 200ms to set the icon - FIXME: could be fixed in the repo
+        self.after(
+            200,
+            lambda: self.iconbitmap(
+                os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "assets/logos/settings128x128.ico",
+                )
+            ),
+        )
+
+        self.geometry(f"{self.SETTINGS_WIDTH}x{self.SETTINGS_HEIGHT}")
+        self.resizable(width=False, height=False)
+
+        appearance_frame = customtkinter.CTkFrame(
+            self, corner_radius=0, fg_color="transparent"
+        )
+
+        appearance_title = customtkinter.CTkLabel(appearance_frame, text="Appearance")
+
+        appearance_options_frame = customtkinter.CTkFrame(
+            appearance_frame, corner_radius=0, fg_color="transparent"
+        )
+
+        appearance_mode_label = customtkinter.CTkLabel(
+            appearance_options_frame, text="Mode"
+        )
+
+        appearance_mode_var = customtkinter.StringVar(
+            value=self.config.get("Settings", "theme").capitalize()
+        )
+        appearance_mode_combobox = customtkinter.CTkComboBox(
+            appearance_options_frame,
+            values=["Light", "Dark", "System"],
+            command=self.change_appearance_mode,
+            variable=appearance_mode_var,
+        )
+
+        # Create Separator for Appearance and Sound Frames
+        separator_a_s = customtkinter.CTkFrame(
+            self,
+            corner_radius=0,
+            height=1,
+            fg_color=SEPARATOR_BACKGROUND_COLOR,
+            border_width=1,
+        )
+
+        sound_frame = customtkinter.CTkFrame(
+            self, corner_radius=0, fg_color="transparent"
+        )
+
+        sound_title = customtkinter.CTkLabel(sound_frame, text="Sound")
+
+        sound_options_frame = customtkinter.CTkFrame(
+            sound_frame, corner_radius=0, fg_color="transparent"
+        )
+
+        # TODO: Enable and disable sounds (MessagesBoxes) adn on config.ini
+        sound_var = customtkinter.StringVar(value="1")
+        sound_checkbox = customtkinter.CTkCheckBox(
+            sound_options_frame,
+            text="Enable sound",
+            variable=sound_var,
+            onvalue="1",
+            offvalue="0",
+        )
+
+        # TODO: Try to set the volume
+
+        # TODO: Translate to different languages
+
+        appearance_title.pack(anchor="w", padx=(10, 0))
+        appearance_options_frame.pack(fill="x")
+        appearance_mode_label.pack(side="left", padx=(10, 10))
+        appearance_mode_combobox.pack(side="left")
+        appearance_frame.pack(expand=True, fill="x")
+        separator_a_s.pack(fill="x")
+        sound_title.pack(anchor="w", padx=(10, 0))
+        sound_options_frame.pack(fill="x")
+        sound_checkbox.pack(anchor="w", padx=(10, 0))
+        sound_frame.pack(expand=True, fill="x")
+
+    def change_appearance_mode(self, appearance_mode):
+        customtkinter.set_appearance_mode(appearance_mode.lower())
+
+        self.config.set("Settings", "theme", appearance_mode.lower())
+
+        with open(self.config_file, "w") as config_file:
+            self.config.write(config_file)
+
 
 def main():
     # TODO: Credits for <a href="https://www.flaticon.com/free-icons/plus" title="plus icons">Plus icons created by Fuzzee - Flaticon</a>
     # TODO: Credits for <a href="https://www.flaticon.com/free-icons/info" title="info icons">Info icons created by Graphics Plazza - Flaticon</a>
+    # TODO: Credits for <a href="https://www.flaticon.com/free-icons/settings" title="settings icons">Settings icons created by Freepik - Flaticon</a>
     app = AutoContract()
     app.mainloop()
 
