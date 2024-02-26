@@ -93,6 +93,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         # Loading config file
         self.config_file = ConfigHolder.config_file
         self.config = ConfigHolder.config
+        self.app_sounds = False
         self.load_configuration()
 
         # Set Menubar
@@ -122,29 +123,6 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         self.file_button_dropdown.add_option(
             option="Exit", command=self.destroy, corner_radius=0
         )
-
-        # self.settings_button_dropdown = CustomDropdownMenu(
-        #     widget=self.settings_button,
-        #     corner_radius=0,
-        #     bg_color=self.DROPDOWN_BACKGROUND_COLOR,
-        #     hover_color=self.HOVER_COLOR,
-        # )
-        # appearance_sub_menu = self.settings_button_dropdown.add_submenu("Appearance")
-        # appearance_sub_menu.add_option(
-        #     option="Light",
-        #     command=lambda: self.change_appearance_mode_event("light"),
-        #     corner_radius=0,
-        # )
-        # appearance_sub_menu.add_option(
-        #     option="Dark",
-        #     command=lambda: self.change_appearance_mode_event("dark"),
-        #     corner_radius=0,
-        # )
-        # appearance_sub_menu.add_option(
-        #     option="System",
-        #     command=lambda: self.change_appearance_mode_event("system"),
-        #     corner_radius=0,
-        # )
 
         github_icon_light_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "assets/icons/github-mark.png"
@@ -604,19 +582,64 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
     def load_configuration(self):
         if os.path.isfile(self.config_file):
             self.config.read(self.config_file)
-            theme = self.config.get("Settings", "theme")
 
-            if theme == "system":
-                customtkinter.set_appearance_mode("system")
-            elif theme == "light":
-                customtkinter.set_appearance_mode("light")
+            if not self.config.has_section("Settings"):
+                self._wrong_config_warning(type="section", section="Settings")
+                self._default_config()
             else:
-                # TODO: If the person set an invalid name in the file that should be handle (MessageBox)
-                customtkinter.set_appearance_mode("dark")
+                theme = self._check_option(
+                    "theme", ["system", "light", "dark"], "system"
+                )
+                customtkinter.set_appearance_mode(theme)
+
+                self.app_sounds = eval(
+                    self._check_option("sounds", ["True", "False"], "True")
+                )
         else:
-            self.config["Settings"] = {"theme": "system"}
+            self._default_config()
+
+    def _default_config(self):
+        self.config["Settings"] = {"theme": "system", "sounds": "True"}
+        with open(self.config_file, "w") as config_file:
+            self.config.write(config_file)
+
+    def _check_option(self, option, valid_values, default_value):
+        if not self.config.has_option("Settings", option):
+            value = default_value
+            self._wrong_config_warning(type="option", section="Settings", option=option)
+            self.config.set("Settings", option, default_value)
             with open(self.config_file, "w") as config_file:
                 self.config.write(config_file)
+        else:
+            value = self.config.get("Settings", option)
+            if value not in valid_values:
+                value = default_value
+                self._wrong_config_warning(
+                    type="value", option=option, values=", ".join(valid_values)
+                )
+                self.config.set("Settings", option, default_value)
+                with open(self.config_file, "w") as config_file:
+                    self.config.write(config_file)
+        return value
+
+    def _wrong_config_warning(self, type, section="", option="", values=""):
+        if type == "section":
+            message = f"Config file missing {section} section! File will be restored!"
+        elif type == "option":
+            message = (
+                f"Config file missing {option} in {section}! File will be restored!"
+            )
+        elif type == "value":
+            message = f"Config file with wrong value in {option}! Valid values: {values}. File will be restored!"
+        else:
+            message = "Something wrong in config file. Will be restored!"
+
+        CTkMessagebox(
+            title="Bad config file!",
+            message=message,
+            icon="warning",
+            option_1="Ok",
+        )
 
     def open_browser(self):
         webbrowser.open_new(self.SOURCE_CODE_URL)
@@ -851,12 +874,11 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
     # TODO: Setting to disable sound (like the theme)
     def generate_contract(self):
         if self.template_file is None:
-            # print("No template file selected")
             CTkMessagebox(
                 title="Error",
                 message="No template file selected!",
                 icon="cancel",
-                sound=True,
+                sound=self.app_sounds,
                 option_focus=1,
                 cancel_button=None,
                 # cancel_button_color="transparent",
@@ -866,7 +888,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
                 title="Error",
                 message="No data!",
                 icon="cancel",
-                sound=True,
+                sound=self.app_sounds,
                 option_focus=1,
                 cancel_button=None,
                 # cancel_button_color="transparent",
@@ -876,7 +898,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
                 title="Error",
                 message="No destination folder selected!",
                 icon="cancel",
-                sound=True,
+                sound=self.app_sounds,
                 option_focus=1,
                 cancel_button=None,
                 # cancel_button_color="transparent",
@@ -924,8 +946,10 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
     SETTINGS_WIDTH = 300
     SETTINGS_HEIGHT = 300
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, auto_contract, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.parent = auto_contract
 
         self.config_file = ConfigHolder.config_file
         self.config = ConfigHolder.config
@@ -989,19 +1013,27 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
             sound_frame, corner_radius=0, fg_color="transparent"
         )
 
-        # TODO: Enable and disable sounds (MessagesBoxes) adn on config.ini
-        sound_var = customtkinter.StringVar(value="1")
+        if self.parent.app_sounds:
+            self.sound_var = customtkinter.StringVar(value="1")
+        else:
+            self.sound_var = customtkinter.StringVar(value="0")
+
         sound_checkbox = customtkinter.CTkCheckBox(
             sound_options_frame,
             text="Enable sound",
-            variable=sound_var,
+            variable=self.sound_var,
             onvalue="1",
             offvalue="0",
+            command=self.change_sounds,
         )
 
         # TODO: Try to set the volume
 
         # TODO: Translate to different languages
+
+        # TODO: Select as default generate pdf (init as checked or not)
+
+        # TODO: Select a default folder to output
 
         appearance_title.pack(anchor="w", padx=(10, 0))
         appearance_options_frame.pack(fill="x")
@@ -1019,6 +1051,16 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
 
         self.config.set("Settings", "theme", appearance_mode.lower())
 
+        with open(self.config_file, "w") as config_file:
+            self.config.write(config_file)
+
+    def change_sounds(self):
+        if self.sound_var.get() == "1":
+            self.parent.app_sounds = True
+        else:
+            self.parent.app_sounds = False
+
+        self.config.set("Settings", "sounds", str(self.parent.app_sounds))
         with open(self.config_file, "w") as config_file:
             self.config.write(config_file)
 
