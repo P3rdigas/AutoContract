@@ -360,7 +360,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         # TODO: Change to scrollable X & Y
         # TODO: Scrollable X & Y background color transparent
         # TODO: Stop scroll when has few elements
-        # TODO: Enable horizontal and vertical scroll with Sfhit+Wheel
+        # TODO: Enable horizontal and vertical scroll with Shift+Wheel
         # TODO: Add button to delete row/column
         # TODO: Add tooltip for each Entry
         # TODO: Size of column labels must be the same (Row1000000000 should cut the text like the folders name in 1 and 3)
@@ -694,7 +694,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         app_path = os.path.dirname(os.path.abspath(__file__))
 
         file = filedialog.askopenfile(
-            initialdir=app_path, filetypes=[("Word files", ".docx")]
+            initial_dir=app_path, filetypes=[("Word files", ".docx")]
         )
 
         if file:
@@ -735,7 +735,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         app_path = os.path.dirname(os.path.abspath(__file__))
 
         file = filedialog.askopenfile(
-            initialdir=app_path, filetypes=[("Excel files", ".xlsx")]
+            initial_dir=app_path, filetypes=[("Excel files", ".xlsx")]
         )
 
         if file:
@@ -840,7 +840,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
     def choose_destination_folder(self):
         app_path = os.path.dirname(os.path.abspath(__file__))
 
-        folder = filedialog.askdirectory(initialdir=app_path)
+        folder = filedialog.askdirectory(initial_dir=app_path)
 
         if folder:
             self.destination_folder = folder
@@ -917,7 +917,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
                 doc.save(output_path)
 
                 # TODO: Convert to pdf is slow, maybe use threads
-                # TODO: Test errors, like permisson errors
+                # TODO: Test errors, like permission errors
                 if self.pdf_value.get() == "1":
                     convert(output_path)
 
@@ -1013,11 +1013,9 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
             sound_frame, corner_radius=0, fg_color="transparent"
         )
 
-        if self.parent.app_sounds:
-            self.sound_var = customtkinter.StringVar(value="1")
-        else:
-            self.sound_var = customtkinter.StringVar(value="0")
-
+        self.sound_var = customtkinter.StringVar(
+            value="1" if self.parent.app_sounds else "0"
+        )
         sound_checkbox = customtkinter.CTkCheckBox(
             sound_options_frame,
             text="Enable sound",
