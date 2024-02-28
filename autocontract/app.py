@@ -5,6 +5,7 @@ from tkinter import filedialog, END, NORMAL, DISABLED
 import pandas as pd
 from docx import Document
 from docx2pdf import convert
+import gettext
 
 import customtkinter
 from CTkMenuBar import CTkMenuBar, CustomDropdownMenu
@@ -15,6 +16,9 @@ from PIL import Image
 
 # CONSTANTS
 SEPARATOR_BACKGROUND_COLOR = "grey90", "black"
+
+# Import _ function to translate
+_ = gettext.gettext
 
 
 class ConfigHolder:
@@ -51,10 +55,12 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
 
     HOVER_COLOR = "grey85", "grey25"
 
-    NO_FOLDER_SELECTED = "No folder selected"
-    NO_FILE_SELECTED = "No file selected"
+    NO_FOLDER_SELECTED = _("No folder selected")
+    NO_FILE_SELECTED = _("No file selected")
 
-    DATA_INFO_MESSAGE = "The names of the variables (in the table) must be equal to the word to be replaced in the template. Is not mandatory to import a data file. If you still want to import, make sure the first the row is for variables and the rest for the data"
+    DATA_INFO_MESSAGE = _(
+        "The names of the variables (in the table) must be equal to the word to be replaced in the template. Is not mandatory to import a data file. If you still want to import, make sure the first the row is for variables and the rest for the data"
+    )
 
     INFO_BUTTON_LIGHT_PATH = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
@@ -100,16 +106,16 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         # TODO: Finish MenuBar
         self.toolbar = CTkMenuBar(master=self, bg_color=self.MENUBAR_BACKGROUND_COLOR)
         self.file_button = self.toolbar.add_cascade(
-            text="File", hover_color=self.HOVER_COLOR
+            text=_("File"), hover_color=self.HOVER_COLOR
         )
 
         self.settings_window = None
 
         self.settings_button = self.toolbar.add_cascade(
-            text="Settings", hover_color=self.HOVER_COLOR, command=self.open_settings
+            text=_("Settings"), hover_color=self.HOVER_COLOR, command=self.open_settings
         )
         self.about_button = self.toolbar.add_cascade(
-            text="About", hover_color=self.HOVER_COLOR
+            text=_("About"), hover_color=self.HOVER_COLOR
         )
 
         self.file_button_dropdown = CustomDropdownMenu(
@@ -118,10 +124,10 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
             bg_color=self.DROPDOWN_BACKGROUND_COLOR,
             hover_color=self.HOVER_COLOR,
         )
-        self.file_button_dropdown.add_option(option="Import", corner_radius=0)
-        self.file_button_dropdown.add_option(option="Export", corner_radius=0)
+        self.file_button_dropdown.add_option(option=_("Import"), corner_radius=0)
+        self.file_button_dropdown.add_option(option=_("Export"), corner_radius=0)
         self.file_button_dropdown.add_option(
-            option="Exit", command=self.destroy, corner_radius=0
+            option=_("Exit"), command=self.destroy, corner_radius=0
         )
 
         github_icon_light_path = os.path.join(
@@ -166,21 +172,25 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
 
         # TODO: Should be?
         # Unicode symbols: http://xahlee.info/comp/unicode_circled_numbers.html
-        template_label = customtkinter.CTkLabel(template_label_frame, text="① Template")
+        template_label = customtkinter.CTkLabel(
+            template_label_frame, text=_("① Template")
+        )
 
         template_controls_frame = customtkinter.CTkFrame(
             template_frame, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
         )
 
         template_file_label = customtkinter.CTkLabel(
-            template_controls_frame, text="Template file:"
+            template_controls_frame, text=_("Template file:")
         )
 
         self.template_file = None
 
+        # FIXME: If translate doesn't work because of the text being a const
         # Default width of the label (can provide font),
         self.TEMPLATE_FILENAME_WIDTH = self.get_width_text(self.NO_FILE_SELECTED)
 
+        # FIXME: If translate doesn't work because of the text being a const
         # TODO: Should be?
         # Width: plus 1 (if width of label equals the width of the text the text you jump out by 1 px) and plus 10 (margin, 5 to the left, 5 to the right)
         self.template_filename_label = customtkinter.CTkLabel(
@@ -210,7 +220,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         template_file_button = customtkinter.CTkButton(
             template_controls_frame,
             width=1,
-            text="Choose file",
+            text=_("Choose file"),
             # fg_color="transparent",
             hover_color=self.HOVER_COLOR,
             command=self.choose_template_file,
@@ -221,7 +231,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         template_file_clear_button = customtkinter.CTkButton(
             template_controls_frame,
             width=1,
-            text="Reset",
+            text=_("Reset"),
             # fg_color="transparent",
             hover_color=self.HOVER_COLOR,
             command=self.reset_template_file,
@@ -262,7 +272,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         # TODO: Should be?
         # Unicode symbols: http://xahlee.info/comp/unicode_circled_numbers.html
         data_header_label = customtkinter.CTkLabel(
-            data_header_label_frame, text="② Data"
+            data_header_label_frame, text=_("② Data")
         )
 
         info_button_image = customtkinter.CTkImage(
@@ -281,6 +291,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
             hover=False,
         )
 
+        # FIXME: If translate doesn't work because of the text being a const
         # TODO: Refactor width and spacing for the tooltip
         info_button_tooltip = CTkToolTip(
             data_header_label_info,
@@ -303,11 +314,12 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
 
         # TODO: Add import csv files as data
         data_file_label = customtkinter.CTkLabel(
-            data_header_controls_frame, text="Data file:"
+            data_header_controls_frame, text=_("Data file:")
         )
 
         self.data_file = None
 
+        # FIXME: If translate doesn't work because of the text being a const
         # Default width of the label (can provide font),
         self.DATA_FILENAME_WIDTH = self.get_width_text(self.NO_FILE_SELECTED)
 
@@ -340,7 +352,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         data_file_button = customtkinter.CTkButton(
             data_header_controls_frame,
             width=1,
-            text="Choose file",
+            text=_("Choose file"),
             # fg_color="transparent",
             hover_color=self.HOVER_COLOR,
             command=self.choose_data_file,
@@ -351,7 +363,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         data_file_clear_button = customtkinter.CTkButton(
             data_header_controls_frame,
             width=1,
-            text="Reset",
+            text=_("Reset"),
             # fg_color="transparent",
             hover_color=self.HOVER_COLOR,
             command=self.reset_data_file,
@@ -372,9 +384,12 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
             # fg_color=self.FRAMES_BACKGROUND_COLOR,
         )
 
-        labels = ["Variables"] + [
-            f"Row {i}" for i in range(1, self.START_ENTRY_ROW_NUM)
-        ]
+        labels = [_("Variables")] + [
+            _("Row {i}").format(i=i) for i in range(1, self.START_ENTRY_ROW_NUM)
+        ]  # [
+        #     _(f"Row {i}" for i in range(1, self.START_ENTRY_ROW_NUM))
+        # ]
+        # FIXME: If translate doesn't work because of the text being a const
         for i, label_text in enumerate(labels):
             label = customtkinter.CTkLabel(
                 self.data_entry_scroll_frame, text=label_text, padx=10, pady=5
@@ -432,7 +447,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         # TODO: Should be?
         # Unicode symbols: http://xahlee.info/comp/unicode_circled_numbers.html
         destination_label = customtkinter.CTkLabel(
-            destination_label_frame, text="③ Destination"
+            destination_label_frame, text=_("③ Destination")
         )
 
         destination_controls_frame = customtkinter.CTkFrame(
@@ -440,16 +455,18 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         )
 
         destination_folder_label = customtkinter.CTkLabel(
-            destination_controls_frame, text="Destination folder:"
+            destination_controls_frame, text=_("Destination folder:")
         )
 
         self.destination_folder = None
 
+        # FIXME: If translate doesn't work because of the text being a const
         # Default width of the label (can provide font),
         self.DESTINATION_FOLDER_NAME_WIDTH = self.get_width_text(
             self.NO_FOLDER_SELECTED
         )
 
+        # FIXME: If translate doesn't work because of the text being a const
         # TODO: Should be?
         # Width: plus 1 (if width of label equals the width of the text the text you jump out by 1 px) and plus 10 (margin, 5 to the left, 5 to the right)
         self.destination_folder_name_label = customtkinter.CTkLabel(
@@ -481,7 +498,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         destination_folder_button = customtkinter.CTkButton(
             destination_controls_frame,
             width=1,
-            text="Choose folder",
+            text=_("Choose folder"),
             # fg_color="transparent",
             hover_color=self.HOVER_COLOR,
             command=self.choose_destination_folder,
@@ -492,7 +509,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         destination_folder_clear_button = customtkinter.CTkButton(
             destination_controls_frame,
             width=1,
-            text="Reset",
+            text=_("Reset"),
             # fg_color="transparent",
             hover_color=self.HOVER_COLOR,
             command=self.reset_destination_folder,
@@ -501,7 +518,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         self.pdf_value = customtkinter.StringVar(value="0")
         self.pdf_checkbox = customtkinter.CTkCheckBox(
             destination_controls_frame,
-            text="Create PDF file",
+            text=_("Create PDF file"),
             variable=self.pdf_value,
             onvalue="1",
             offvalue="0",
@@ -512,7 +529,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         destination_generate_button = customtkinter.CTkButton(
             destination_controls_frame,
             width=50,
-            text="Generate",
+            text=_("Generate"),
             # fg_color="transparent",
             hover_color=self.HOVER_COLOR,
             command=self.generate_contract,
@@ -624,18 +641,22 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
 
     def _wrong_config_warning(self, type, section="", option="", values=""):
         if type == "section":
-            message = f"Config file missing {section} section! File will be restored!"
+            message = _(
+                f"Config file missing {section} section! File will be restored!"
+            )
         elif type == "option":
-            message = (
+            message = _(
                 f"Config file missing {option} in {section}! File will be restored!"
             )
         elif type == "value":
-            message = f"Config file with wrong value in {option}! Valid values: {values}. File will be restored!"
+            message = _(
+                f"Config file with wrong value in {option}! Valid values: {values}. File will be restored!"
+            )
         else:
-            message = "Something wrong in config file. Will be restored!"
+            message = _("Something wrong in config file. Will be restored!")
 
         CTkMessagebox(
-            title="Bad config file!",
+            title=_("Bad config file!"),
             message=message,
             icon="warning",
             option_1="Ok",
@@ -665,7 +686,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
 
         self.add_row_button.grid(row=num_rows, pady=10, sticky="we")
 
-        label_text = f"Row {new_entry_row}"
+        label_text = _(f"Row {new_entry_row}")
         label = customtkinter.CTkLabel(
             self.data_entry_scroll_frame, text=label_text, padx=10, pady=5
         )
@@ -694,7 +715,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         app_path = os.path.dirname(os.path.abspath(__file__))
 
         file = filedialog.askopenfile(
-            initial_dir=app_path, filetypes=[("Word files", ".docx")]
+            initial_dir=app_path, filetypes=[(_("Word files"), ".docx")]
         )
 
         if file:
@@ -722,6 +743,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
                 self.template_filename_label.configure(text=filename)
                 self.template_filename_label_tooltip.hide()
 
+    # FIXME: If translate doesn't work because of the text being a const
     # TODO: Refactor this function with reset_destination_folder()
     def reset_template_file(self):
         if self.template_file is not None:
@@ -735,7 +757,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         app_path = os.path.dirname(os.path.abspath(__file__))
 
         file = filedialog.askopenfile(
-            initial_dir=app_path, filetypes=[("Excel files", ".xlsx")]
+            initial_dir=app_path, filetypes=[(_("Excel files"), ".xlsx")]
         )
 
         if file:
@@ -800,6 +822,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
                     widget.insert(0, data)
                     self.data[row_index][col_index - 1] = data
 
+    # FIXME: If translate doesn't work because of the text being a const
     # TODO: Refactor this function with reset_template_file() and reset_destination_folder()
     def reset_data_file(self):
         if self.data_file is not None:
@@ -876,7 +899,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         if self.template_file is None:
             CTkMessagebox(
                 title="Error",
-                message="No template file selected!",
+                message=_("No template file selected!"),
                 icon="cancel",
                 sound=self.app_sounds,
                 option_focus=1,
@@ -886,7 +909,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         elif not self.data:
             CTkMessagebox(
                 title="Error",
-                message="No data!",
+                message=_("No data!"),
                 icon="cancel",
                 sound=self.app_sounds,
                 option_focus=1,
@@ -896,7 +919,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         elif self.destination_folder is None:
             CTkMessagebox(
                 title="Error",
-                message="No destination folder selected!",
+                message=_("No destination folder selected!"),
                 icon="cancel",
                 sound=self.app_sounds,
                 option_focus=1,
@@ -912,6 +935,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
                 for j, data in enumerate(data_list):
                     self.replace_text_in_docx(doc, variables[j], data)
 
+                # TODO: Better name for the output file
                 # filename = os.path.basename(self.template_file.name)
                 output_path = os.path.join(self.destination_folder, f"OUTPUT_{i}.docx")
                 doc.save(output_path)
@@ -954,7 +978,7 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
         self.config_file = ConfigHolder.config_file
         self.config = ConfigHolder.config
 
-        self.title("Settings")
+        self.title(_("Settings"))
 
         # CTk wait to 200ms to set the icon - FIXME: could be fixed in the repo
         self.after(
@@ -974,22 +998,25 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
             self, corner_radius=0, fg_color="transparent"
         )
 
-        appearance_title = customtkinter.CTkLabel(appearance_frame, text="Appearance")
+        appearance_title = customtkinter.CTkLabel(
+            appearance_frame, text=_("Appearance")
+        )
 
         appearance_options_frame = customtkinter.CTkFrame(
             appearance_frame, corner_radius=0, fg_color="transparent"
         )
 
         appearance_mode_label = customtkinter.CTkLabel(
-            appearance_options_frame, text="Mode"
+            appearance_options_frame, text=_("Mode:")
         )
 
         appearance_mode_var = customtkinter.StringVar(
             value=self.config.get("Settings", "theme").capitalize()
         )
+        # FIXME: If breaks change_appearance_mode (different values)
         appearance_mode_combobox = customtkinter.CTkComboBox(
             appearance_options_frame,
-            values=["Light", "Dark", "System"],
+            values=[_("Light"), _("Dark"), _("System")],
             command=self.change_appearance_mode,
             variable=appearance_mode_var,
         )
@@ -1007,7 +1034,7 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
             self, corner_radius=0, fg_color="transparent"
         )
 
-        sound_title = customtkinter.CTkLabel(sound_frame, text="Sound")
+        sound_title = customtkinter.CTkLabel(sound_frame, text=_("Sound"))
 
         sound_options_frame = customtkinter.CTkFrame(
             sound_frame, corner_radius=0, fg_color="transparent"
@@ -1018,7 +1045,7 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
         )
         sound_checkbox = customtkinter.CTkCheckBox(
             sound_options_frame,
-            text="Enable sound",
+            text=_("Enable sound"),
             variable=self.sound_var,
             onvalue="1",
             offvalue="0",
@@ -1027,22 +1054,71 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
 
         # TODO: Try to set the volume
 
+        # Create Separator for Sound and Language Frames
+        separator_s_l = customtkinter.CTkFrame(
+            self,
+            corner_radius=0,
+            height=1,
+            fg_color=SEPARATOR_BACKGROUND_COLOR,
+            border_width=1,
+        )
+
         # TODO: Translate to different languages
+        # IN PROGRESS, but is better to finish the app and then create the translations
+        lang_frame = customtkinter.CTkFrame(
+            self, corner_radius=0, fg_color="transparent"
+        )
+
+        lang_title = customtkinter.CTkLabel(lang_frame, text=_("Language"))
+
+        lang_options_frame = customtkinter.CTkFrame(
+            lang_frame, corner_radius=0, fg_color="transparent"
+        )
+
+        lang_label = customtkinter.CTkLabel(lang_options_frame, text=_("Choose:"))
+
+        lang_var = customtkinter.StringVar(
+            # value=self.config.get("Settings", "theme").capitalize()
+            # TODO: Store inside config file
+            value="English"
+        )
+        # FIXME: If breaks change_appearance_mode (different values)
+        lang_combobox = customtkinter.CTkComboBox(
+            lang_options_frame,
+            values=[_("English"), _("Portuguese")],
+            command=self.change_lang,
+            variable=lang_var,
+        )
 
         # TODO: Select as default generate pdf (init as checked or not)
 
         # TODO: Select a default folder to output
 
+        # Layout for appearance
         appearance_title.pack(anchor="w", padx=(10, 0))
         appearance_options_frame.pack(fill="x")
         appearance_mode_label.pack(side="left", padx=(10, 10))
         appearance_mode_combobox.pack(side="left")
         appearance_frame.pack(expand=True, fill="x")
+
+        # Separator
         separator_a_s.pack(fill="x")
+
+        # Layout for sound
         sound_title.pack(anchor="w", padx=(10, 0))
         sound_options_frame.pack(fill="x")
         sound_checkbox.pack(anchor="w", padx=(10, 0))
         sound_frame.pack(expand=True, fill="x")
+
+        # Separator
+        separator_s_l.pack(fill="x")
+
+        # Layout for language
+        lang_title.pack(anchor="w", padx=(10, 0))
+        lang_options_frame.pack(fill="x")
+        lang_label.pack(side="left", padx=(10, 10))
+        lang_combobox.pack(side="left")
+        lang_frame.pack(expand=True, fill="x")
 
     def change_appearance_mode(self, appearance_mode):
         customtkinter.set_appearance_mode(appearance_mode.lower())
@@ -1061,6 +1137,9 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
         self.config.set("Settings", "sounds", str(self.parent.app_sounds))
         with open(self.config_file, "w") as config_file:
             self.config.write(config_file)
+
+    def change_lang(self, lang):
+        print(lang)
 
 
 def main():

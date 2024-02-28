@@ -6,3 +6,5 @@ app_test.py
 
 # Output test folder
 autocontract/output/*
+
+*.exe

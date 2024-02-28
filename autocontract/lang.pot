@@ -1,0 +1,205 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-02-28 02:43+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: app.py:58
+msgid "No folder selected"
+msgstr ""
+
+#: app.py:59
+msgid "No file selected"
+msgstr ""
+
+#: app.py:62
+msgid ""
+"The names of the variables (in the table) must be equal to the word to be "
+"replaced in the template. Is not mandatory to import a data file. If you "
+"still want to import, make sure the first the row is for variables and the "
+"rest for the data"
+msgstr ""
+
+#: app.py:109
+msgid "File"
+msgstr ""
+
+#: app.py:115 app.py:981
+msgid "Settings"
+msgstr ""
+
+#: app.py:118
+msgid "About"
+msgstr ""
+
+#: app.py:127
+msgid "Import"
+msgstr ""
+
+#: app.py:128
+msgid "Export"
+msgstr ""
+
+#: app.py:130
+msgid "Exit"
+msgstr ""
+
+#: app.py:176
+msgid "① Template"
+msgstr ""
+
+#: app.py:184
+msgid "Template file:"
+msgstr ""
+
+#: app.py:223 app.py:355
+msgid "Choose file"
+msgstr ""
+
+#: app.py:234 app.py:366 app.py:512
+msgid "Reset"
+msgstr ""
+
+#: app.py:275
+msgid "② Data"
+msgstr ""
+
+#: app.py:317
+msgid "Data file:"
+msgstr ""
+
+#: app.py:387
+msgid "Variables"
+msgstr ""
+
+#: app.py:388
+#, python-brace-format
+msgid "Row {i}"
+msgstr ""
+
+#: app.py:450
+msgid "③ Destination"
+msgstr ""
+
+#: app.py:458
+msgid "Destination folder:"
+msgstr ""
+
+#: app.py:501
+msgid "Choose folder"
+msgstr ""
+
+#: app.py:521
+msgid "Create PDF file"
+msgstr ""
+
+#: app.py:532
+msgid "Generate"
+msgstr ""
+
+#: app.py:645
+#, python-brace-format
+msgid "Config file missing {section} section! File will be restored!"
+msgstr ""
+
+#: app.py:649
+#, python-brace-format
+msgid "Config file missing {option} in {section}! File will be restored!"
+msgstr ""
+
+#: app.py:653
+#, python-brace-format
+msgid ""
+"Config file with wrong value in {option}! Valid values: {values}. File will "
+"be restored!"
+msgstr ""
+
+#: app.py:656
+msgid "Something wrong in config file. Will be restored!"
+msgstr ""
+
+#: app.py:659
+msgid "Bad config file!"
+msgstr ""
+
+#: app.py:689
+#, python-brace-format
+msgid "Row {new_entry_row}"
+msgstr ""
+
+#: app.py:718
+msgid "Word files"
+msgstr ""
+
+#: app.py:760
+msgid "Excel files"
+msgstr ""
+
+#: app.py:902
+msgid "No template file selected!"
+msgstr ""
+
+#: app.py:912
+msgid "No data!"
+msgstr ""
+
+#: app.py:922
+msgid "No destination folder selected!"
+msgstr ""
+
+#: app.py:1002
+msgid "Appearance"
+msgstr ""
+
+#: app.py:1010
+msgid "Mode:"
+msgstr ""
+
+#: app.py:1019
+msgid "Light"
+msgstr ""
+
+#: app.py:1019
+msgid "Dark"
+msgstr ""
+
+#: app.py:1019
+msgid "System"
+msgstr ""
+
+#: app.py:1037
+msgid "Sound"
+msgstr ""
+
+#: app.py:1048
+msgid "Enable sound"
+msgstr ""
+
+#: app.py:1072
+msgid "Language"
+msgstr ""
+
+#: app.py:1078
+msgid "Choose:"
+msgstr ""
+
+#: app.py:1088
+msgid "English"
+msgstr ""
+
+#: app.py:1088
+msgid "Portuguese"
+msgstr ""
