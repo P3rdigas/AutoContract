@@ -615,11 +615,20 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
                     .capitalize()
                 )
                 self.app_sounds = eval(sounds)
+
+                lang = self._check_option(
+                    "language", ["english", "portuguese"], "english"
+                )
+                # TODO: Load language
         else:
             self._default_config()
 
     def _default_config(self):
-        self.config["Settings"] = {"theme": "system", "sounds": "True"}
+        self.config["Settings"] = {
+            "theme": "system",
+            "sounds": "True",
+            "language": "english",
+        }
         with open(self.config_file, "w") as config_file:
             self.config.write(config_file)
 
@@ -1066,8 +1075,6 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
             border_width=1,
         )
 
-        # TODO: Translate to different languages
-        # IN PROGRESS, but is better to finish the app and then create the translations
         lang_frame = customtkinter.CTkFrame(
             self, corner_radius=0, fg_color="transparent"
         )
@@ -1081,9 +1088,7 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
         lang_label = customtkinter.CTkLabel(lang_options_frame, text=_("Choose:"))
 
         lang_var = customtkinter.StringVar(
-            # value=self.config.get("Settings", "theme").capitalize()
-            # TODO: Store inside config file
-            value="English"
+            value=self.config.get("Settings", "language").capitalize()
         )
         # FIXME: If breaks change_appearance_mode (different values)
         lang_combobox = customtkinter.CTkComboBox(
@@ -1139,7 +1144,12 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
             self.config.write(config_file)
 
     def change_lang(self, lang):
-        print(lang)
+        # TODO: Translate to different languages
+        # IN PROGRESS, but is better to finish the app and then create the translations
+        self.config.set("Settings", "language", lang.lower())
+
+        with open(self.config_file, "w") as config_file:
+            self.config.write(config_file)
 
 
 def main():
