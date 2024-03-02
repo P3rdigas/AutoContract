@@ -609,9 +609,12 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
                 )
                 customtkinter.set_appearance_mode(theme)
 
-                self.app_sounds = eval(
+                sounds = (
                     self._check_option("sounds", ["True", "False"], "True")
+                    .lower()
+                    .capitalize()
                 )
+                self.app_sounds = eval(sounds)
         else:
             self._default_config()
 
@@ -1129,10 +1132,7 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
             self.config.write(config_file)
 
     def change_sounds(self):
-        if self.sound_var.get() == "1":
-            self.parent.app_sounds = True
-        else:
-            self.parent.app_sounds = False
+        self.parent.app_sounds = self.sound_var.get() == "1"
 
         self.config.set("Settings", "sounds", str(self.parent.app_sounds))
         with open(self.config_file, "w") as config_file:
