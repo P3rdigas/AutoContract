@@ -113,7 +113,6 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         self.load_configuration()
 
         # Set Menubar
-        # TODO: Finish MenuBar
         toolbar = CTkMenuBar(master=self, bg_color=self.MENUBAR_BACKGROUND_COLOR)
         file_button = toolbar.add_cascade(text=_("File"), hover_color=self.HOVER_COLOR)
 
@@ -132,7 +131,17 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
             bg_color=self.DROPDOWN_BACKGROUND_COLOR,
             hover_color=self.HOVER_COLOR,
         )
-        file_button_dropdown.add_option(option=_("Import"), corner_radius=0)
+        import_files = file_button_dropdown.add_submenu(
+            submenu_name=_("Import"), corner_radius=0
+        )
+        import_files.add_option(
+            option=_("Template file"),
+            command=self.choose_template_file,
+            corner_radius=0,
+        )
+        import_files.add_option(
+            option=_("Data file"), command=self.choose_data_file, corner_radius=0
+        )
 
         clear_data = file_button_dropdown.add_submenu(
             submenu_name=_("Clear"), corner_radius=0
