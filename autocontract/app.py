@@ -114,31 +114,29 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
 
         # Set Menubar
         # TODO: Finish MenuBar
-        self.toolbar = CTkMenuBar(master=self, bg_color=self.MENUBAR_BACKGROUND_COLOR)
-        self.file_button = self.toolbar.add_cascade(
-            text=_("File"), hover_color=self.HOVER_COLOR
-        )
+        toolbar = CTkMenuBar(master=self, bg_color=self.MENUBAR_BACKGROUND_COLOR)
+        file_button = toolbar.add_cascade(text=_("File"), hover_color=self.HOVER_COLOR)
 
         self.settings_window = None
 
-        self.settings_button = self.toolbar.add_cascade(
+        toolbar.add_cascade(
             text=_("Settings"), hover_color=self.HOVER_COLOR, command=self.open_settings
         )
-        self.about_button = self.toolbar.add_cascade(
+        about_button = toolbar.add_cascade(
             text=_("About"), hover_color=self.HOVER_COLOR
         )
 
-        self.file_button_dropdown = CustomDropdownMenu(
-            widget=self.file_button,
+        file_button_dropdown = CustomDropdownMenu(
+            widget=file_button,
             corner_radius=0,
             bg_color=self.DROPDOWN_BACKGROUND_COLOR,
             hover_color=self.HOVER_COLOR,
         )
-        self.file_button_dropdown.add_option(option=_("Import"), corner_radius=0)
-        self.file_button_dropdown.add_option(
+        file_button_dropdown.add_option(option=_("Import"), corner_radius=0)
+        file_button_dropdown.add_option(
             option=_("Generate"), command=self.generate_contracts, corner_radius=0
         )
-        self.file_button_dropdown.add_option(
+        file_button_dropdown.add_option(
             option=_("Exit"), command=self.destroy, corner_radius=0
         )
 
@@ -156,13 +154,13 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
             dark_image=Image.open(github_icon_dark_path),
         )
 
-        self.about_button_dropdown = CustomDropdownMenu(
-            widget=self.about_button,
+        about_button_dropdown = CustomDropdownMenu(
+            widget=about_button,
             corner_radius=0,
             bg_color=self.DROPDOWN_BACKGROUND_COLOR,
             hover_color=self.HOVER_COLOR,
         )
-        self.about_button_dropdown.add_option(
+        about_button_dropdown.add_option(
             option="Source Code",
             command=self.open_browser,
             image=github_image,
