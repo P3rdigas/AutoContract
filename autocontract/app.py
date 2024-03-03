@@ -53,6 +53,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
     # Plus 2 because the labels column
     START_COL_SPAN = START_ENTRY_COL_NUM + 1
 
+    STEPS_ICON_SIZE = (16, 16)
     INFO_BUTTON_ICON_SIZE = (16, 16)
     ADD_ENTRY_ICON_SIZE = (16, 16)
 
@@ -64,6 +65,8 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
     TOOLTIP_BORDER_COLOR = "black", "white"
 
     HOVER_COLOR = "grey85", "grey25"
+
+    SPACER = "  "
 
     NO_FOLDER_SELECTED = _("No folder selected")
     NO_FILE_SELECTED = _("No file selected")
@@ -204,10 +207,26 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
             template_frame, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
         )
 
-        # TODO: Should be?
-        # Unicode symbols: http://xahlee.info/comp/unicode_circled_numbers.html
+        step1_light_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "assets/icons/step1-black.png"
+        )
+
+        step1_dark_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "assets/icons/step1-white.png",
+        )
+
+        step1_image = customtkinter.CTkImage(
+            light_image=Image.open(step1_light_path),
+            dark_image=Image.open(step1_dark_path),
+            size=self.STEPS_ICON_SIZE,
+        )
+
         template_label = customtkinter.CTkLabel(
-            template_label_frame, text=_("① Template")
+            template_label_frame,
+            text=self.SPACER + _("Template"),
+            image=step1_image,
+            compound="left",
         )
 
         template_controls_frame = customtkinter.CTkFrame(
@@ -303,10 +322,26 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
             fg_color=self.FRAMES_BACKGROUND_COLOR,
         )
 
-        # TODO: Should be?
-        # Unicode symbols: http://xahlee.info/comp/unicode_circled_numbers.html
+        step2_light_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "assets/icons/step2-black.png"
+        )
+
+        step2_dark_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "assets/icons/step2-white.png",
+        )
+
+        step2_image = customtkinter.CTkImage(
+            light_image=Image.open(step2_light_path),
+            dark_image=Image.open(step2_dark_path),
+            size=self.STEPS_ICON_SIZE,
+        )
+
         data_header_label = customtkinter.CTkLabel(
-            data_header_label_frame, text=_("② Data")
+            data_header_label_frame,
+            text=self.SPACER + _("Data"),
+            image=step2_image,
+            compound="left",
         )
 
         info_button_image = customtkinter.CTkImage(
@@ -478,10 +513,26 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
             destination_frame, corner_radius=0, fg_color=self.FRAMES_BACKGROUND_COLOR
         )
 
-        # TODO: Should be?
-        # Unicode symbols: http://xahlee.info/comp/unicode_circled_numbers.html
+        step3_light_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "assets/icons/step3-black.png"
+        )
+
+        step3_dark_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "assets/icons/step3-white.png",
+        )
+
+        step3_image = customtkinter.CTkImage(
+            light_image=Image.open(step3_light_path),
+            dark_image=Image.open(step3_dark_path),
+            size=self.STEPS_ICON_SIZE,
+        )
+
         destination_label = customtkinter.CTkLabel(
-            destination_label_frame, text=_("③ Destination")
+            destination_label_frame,
+            text=self.SPACER + _("Destination"),
+            image=step3_image,
+            compound="left",
         )
 
         destination_controls_frame = customtkinter.CTkFrame(
