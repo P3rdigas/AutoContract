@@ -133,6 +133,21 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
             hover_color=self.HOVER_COLOR,
         )
         file_button_dropdown.add_option(option=_("Import"), corner_radius=0)
+
+        clear_data = file_button_dropdown.add_submenu(
+            submenu_name=_("Clear"), corner_radius=0
+        )
+        clear_data.add_option(
+            option=_("Template"), command=self.reset_template_file, corner_radius=0
+        )
+        clear_data.add_option(
+            option=_("Data"), command=self.reset_data_content, corner_radius=0
+        )
+        clear_data.add_option(
+            option=_("Folder"), command=self.reset_destination_folder, corner_radius=0
+        )
+        clear_data.add_option(option=_("All"), command=self.reset_all, corner_radius=0)
+
         file_button_dropdown.add_option(
             option=_("Generate"), command=self.generate_contracts, corner_radius=0
         )
@@ -376,7 +391,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
             text=_("Reset"),
             # fg_color="transparent",
             hover_color=self.HOVER_COLOR,
-            command=self.reset_data_file,
+            command=self.reset_data_content,
         )
 
         # TODO: Change to scrollable X & Y
@@ -750,7 +765,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         app_path = os.path.dirname(os.path.abspath(__file__))
 
         file = filedialog.askopenfile(
-            initial_dir=app_path, filetypes=[(_("Word files"), ".docx")]
+            initialdir=app_path, filetypes=[(_("Word files"), ".docx")]
         )
 
         if file:
@@ -792,7 +807,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         app_path = os.path.dirname(os.path.abspath(__file__))
 
         file = filedialog.askopenfile(
-            initial_dir=app_path, filetypes=[(_("Excel files"), ".xlsx")]
+            initialdir=app_path, filetypes=[(_("Excel files"), ".xlsx")]
         )
 
         if file:
@@ -859,7 +874,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
 
     # FIXME: If translate doesn't work because of the text being a const
     # TODO: Refactor this function with reset_template_file() and reset_destination_folder()
-    def reset_data_file(self):
+    def reset_data_content(self):
         if self.data_file is not None:
             self.data_file = None
             self.data_filename_label.configure(text=self.NO_FILE_SELECTED)
@@ -898,7 +913,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
     def choose_destination_folder(self):
         app_path = os.path.dirname(os.path.abspath(__file__))
 
-        folder = filedialog.askdirectory(initial_dir=app_path)
+        folder = filedialog.askdirectory(initialdir=app_path)
 
         if folder:
             self.destination_folder = folder
@@ -927,6 +942,11 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
             self.destination_folder_name_label.configure(text=self.NO_FOLDER_SELECTED)
             self.destination_folder_name_label_tooltip.configure(message=None)
             self.destination_folder_name_label_tooltip.hide()
+
+    def reset_all(self):
+        self.reset_template_file()
+        self.reset_data_content()
+        self.reset_destination_folder()
 
     # TODO: Error boxes for warnings or errors
     # TODO: Setting to disable sound (like the theme)
