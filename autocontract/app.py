@@ -17,6 +17,16 @@ from PIL import Image
 # CONSTANTS
 SEPARATOR_BACKGROUND_COLOR = "grey90", "black"
 
+# Default options
+options = {
+    "themes": ["system", "light", "dark"],
+    "default_theme": "system",
+    "sounds": ["True", "False"],
+    "default_sounds": "True",
+    "languages": ["english", "portuguese"],
+    "default_language": "english",
+}
+
 # Import _ function to translate
 _ = gettext.gettext
 
@@ -597,31 +607,42 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         destination_frame.pack(fill="x")
 
     def load_configuration(self):
+        theme, sounds, language = self._read_config()
+
+        # FIXME: Seems that set_appearance_mode needs to be set after MessageBox is drawn, but happens only sometimes
+        # Wait for MessageBox is drawn to change appearance mode
+        self.update()
+        customtkinter.set_appearance_mode(theme)
+        self.app_sounds = eval(sounds)
+        # TODO: load language
+
+    def _read_config(self):
         if os.path.isfile(self.config_file):
             self.config.read(self.config_file)
 
             if not self.config.has_section("Settings"):
                 self._wrong_config_warning(type="section", section="Settings")
-                self._default_config()
+                return self._default_config()
             else:
                 theme = self._check_option(
-                    "theme", ["system", "light", "dark"], "system"
-                )
-                customtkinter.set_appearance_mode(theme)
+                    "theme", options["themes"], options["default_theme"]
+                ).lower()
 
                 sounds = (
-                    self._check_option("sounds", ["True", "False"], "True")
+                    self._check_option(
+                        "sounds", options["sounds"], options["default_sounds"]
+                    )
                     .lower()
                     .capitalize()
                 )
-                self.app_sounds = eval(sounds)
 
                 lang = self._check_option(
-                    "language", ["english", "portuguese"], "english"
-                )
-                # TODO: Load language
+                    "language", options["languages"], options["default_language"]
+                ).lower()
+
+                return theme, sounds, lang
         else:
-            self._default_config()
+            return self._default_config()
 
     def _default_config(self):
         self.config["Settings"] = {
@@ -631,6 +652,8 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
         }
         with open(self.config_file, "w") as config_file:
             self.config.write(config_file)
+
+        return "system", "True", "english"
 
     def _check_option(self, option, valid_values, default_value):
         if not self.config.has_option("Settings", option):
@@ -968,14 +991,12 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
 
     def open_settings(self):
         if self.settings_window is None or not self.settings_window.winfo_exists():
-            self.settings_window = SettingsTopLevel(
-                self
-            )  # create window if its None or destroyed
+            self.settings_window = SettingsTopLevel(self)
             self.settings_window.bind(
                 "<Visibility>", lambda event: self.settings_window.focus()
             )
         else:
-            self.settings_window.focus()  # if window exists focus it
+            self.settings_window.focus()
 
 
 class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
@@ -1006,6 +1027,8 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
         self.geometry(f"{self.SETTINGS_WIDTH}x{self.SETTINGS_HEIGHT}")
         self.resizable(width=False, height=False)
 
+        theme, sounds, language = self.parent._read_config()
+
         appearance_frame = customtkinter.CTkFrame(
             self, corner_radius=0, fg_color="transparent"
         )
@@ -1022,9 +1045,7 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
             appearance_options_frame, text=_("Mode:")
         )
 
-        appearance_mode_var = customtkinter.StringVar(
-            value=self.config.get("Settings", "theme").capitalize()
-        )
+        appearance_mode_var = customtkinter.StringVar(value=theme.capitalize())
         # FIXME: If breaks change_appearance_mode (different values)
         appearance_mode_combobox = customtkinter.CTkComboBox(
             appearance_options_frame,
@@ -1052,9 +1073,7 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
             sound_frame, corner_radius=0, fg_color="transparent"
         )
 
-        self.sound_var = customtkinter.StringVar(
-            value="1" if self.parent.app_sounds else "0"
-        )
+        self.sound_var = customtkinter.StringVar(value=("1" if eval(sounds) else "0"))
         sound_checkbox = customtkinter.CTkCheckBox(
             sound_options_frame,
             text=_("Enable sound"),
@@ -1087,9 +1106,7 @@ class SettingsTopLevel(customtkinter.CTkToplevel, ConfigHolder):
 
         lang_label = customtkinter.CTkLabel(lang_options_frame, text=_("Choose:"))
 
-        lang_var = customtkinter.StringVar(
-            value=self.config.get("Settings", "language").capitalize()
-        )
+        lang_var = customtkinter.StringVar(value=language.capitalize())
         # FIXME: If breaks change_appearance_mode (different values)
         lang_combobox = customtkinter.CTkComboBox(
             lang_options_frame,
