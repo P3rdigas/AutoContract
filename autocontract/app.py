@@ -135,7 +135,9 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
             hover_color=self.HOVER_COLOR,
         )
         self.file_button_dropdown.add_option(option=_("Import"), corner_radius=0)
-        self.file_button_dropdown.add_option(option=_("Export"), corner_radius=0)
+        self.file_button_dropdown.add_option(
+            option=_("Generate"), command=self.generate_contracts, corner_radius=0
+        )
         self.file_button_dropdown.add_option(
             option=_("Exit"), command=self.destroy, corner_radius=0
         )
@@ -542,7 +544,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
             text=_("Generate"),
             # fg_color="transparent",
             hover_color=self.HOVER_COLOR,
-            command=self.generate_contract,
+            command=self.generate_contracts,
         )
 
         # Template Layout
@@ -930,7 +932,7 @@ class AutoContract(customtkinter.CTk, ConfigHolder):
 
     # TODO: Error boxes for warnings or errors
     # TODO: Setting to disable sound (like the theme)
-    def generate_contract(self):
+    def generate_contracts(self):
         if self.template_file is None:
             CTkMessagebox(
                 title="Error",
